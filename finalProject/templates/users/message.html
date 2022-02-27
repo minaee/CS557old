@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} | Messages History {% endblock %}
+
+{% block content %}
+
+<style>
+  th {
+    background-color:#d3d3d3;
+    width: 100%;
+  }
+</style>
+
+
+<div class="container mb-3">
+  <!-- Breadcrumb -->
+<div class="container pt-3">
+  <nav aria-label="breadcrumb">
+              <ol class="breadcrumb" style="background-color: #FFF;">
+
+              <li class="breadcrumb-item">
+                  <a href="{% url 'index' %}" class="text-dark">
+                  <i class="fas fa-home"></i> Home</a>
+              </li>
+              
+              <li class="breadcrumb-item">
+                  <a href="{% url 'dashboard' %}" class="text-dark">
+                  <i class="fas fa-home"></i> Dashboard</a>
+              </li>
+
+              {% if user.is_authenticated %}
+                <li class="breadcrumb-item active"> Message</li>
+              {% endif %}
+              </ol>
+              
+  </nav>
+</div>
+<!-- Breadcrumb -->
+
+
+<!-- dashboard content -->
+<div class="container z-depth-1 pb-3">
+  <div class="row">
+
+      <!-- sidebar -->
+      <div class="col-md-4 col-xl-4 offset-xl-0 mt-3">
+        
+        {% include 'partials/_dashboard_base.html' %}
+          
+      </div>
+
+      <!-- content -->
+      <div class="col-md-8">
+
+        <h1> Messages </h1>
+        <hr>
+
+        <div class="row">
+
+          <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+            {% if contact %}
+
+              <!-- Card base message-->
+              <div class="card hoverable mb-4 text-dark" >
+
+                  <!-- Card image -->
+                  <!-- <img class="card-img-top" src="{{ controlvalve.cover.url }}" alt="Card image cap" > -->
+                  <div class="card-header">
+                    
+                    <div class="row d-flex">
+                      <div class="col-4 d-flex justify-content-start">{% if contact.owner.title %}{{contact.owner.title}}{% endif %} {{ contact.owner.get_full_name}}</div>
+                      <div class="col-4 d-flex justify-content-center">{{ contact.owner.company}}</div>
+                      <div class="col-4 d-flex justify-content-end">{{ contact.contact_date|date:"d/m/Y-G:i"}}</div>
+
+                    </div>
+                  </div>
+
+                  <!-- Card content style="white-space: pre-line"-->
+                  <div class="card-body"  >
+                    <p style="font-family: sans-serif, 'Times New Roman', Times, serif; font-size: 16px;">{{ contact.message|safe }}</p>
+
+                    {% if contact.myfile %}
+                    <div class="">
+                        <a role="button" 
+                            href="{{ contact.myfile.url }}"
+                            download="{{ contact.myfile.url }}"
+                            class="btn btn-light text-dark ml-0">
+                            Download attachment
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                  </div>
+
+                  <div class="card-footer">
+
+                    <div class="row">
+
+                      <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 my-auto mr-auto">
+                        Status: {{ contact.status}}
+                      </div>
+                      
+
+                    </div>
+
+                    
+                  </div>
+
+              </div>
+
+              <!-- Card replies -->
+              {% if replies %}
+              {% for reply in replies %}
+              <div class="card hoverable mb-4 text-dark" >
+
+                
+                <div class="card-header">
+                  <div class="row d-flex">
+                    <div class="col-4 d-flex justify-content-start">{% if reply.owner.title %}{{reply.owner.title}}{% endif %} {{ reply.owner.get_full_name}}</div>
+                    <div class="col-4 d-flex justify-content-center">{{ reply.owner.company}}</div>
+                    <div class="col-4 d-flex justify-content-end">{{ reply.contact_date|date:"d/m/Y-G:i"}}</div>
+
+                  </div>
+                </div>
+
+                <!-- Card content style="white-space: pre-line"-->
+                <div class="card-body"  >
+                  <p style="font-family: sans-serif, 'Times New Roman', Times, serif; font-size: 16px;">{{ reply.message|safe }}</p>
+
+                  {% if reply.myfile %}
+                  <div class="">
+                      <a role="button" 
+                          href="{{ reply.myfile.url }}"
+                          download="{{ reply.myfile.url }}"
+                          class="btn btn-light text-dark ml-0">
+                          Download attachment
+                      </a>
+                  </div>
+                  {% endif %}
+                  
+                </div>
+
+                <div class="card-footer">
+
+                  <div class="row">
+
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 my-auto mr-auto">
+                      Status: {{ reply.status}}
+                    </div>
+                    
+
+                  </div>
+
+                  
+                </div>
+
+              </div>
+              {% endfor %}
+              {% endif %}
+
+              <!-- Card answer -->
+              <div class="card  mb-4 text-dark" id="reply" display="none" >
+
+                <div class="card-body"  >
+                    <!-- url 'answer_message' quote.message_id -->
+                    <form name="messageform" id="messageform" action="{% url 'contact' %}" method="POST" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      
+                      <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                      <input type="hidden" name="receiver_id" value="to_admins">
+                      
+                      <!-- <input type="hidden" name="receiver_id" value="to_admins"> -->
+                      <input type="hidden" name="in_converstation" value="True">
+                      <input type="hidden" name="chat_id" value="{{contact.message_id}}">
+                      <input type="hidden" name="subject" value="{{contact.subject}}">
+          
+                      <input type="hidden" name="is_opened_admin_value" value="False">
+                      <input type="hidden" name="is_opened_user_value" value="True">
+
+                      {% if general %}
+                          {% for key, value in general.items %}
+                              {% if key == 'Ask a Quote' %}
+                              <input type="hidden" id="subject" name="subject" value="{{ key }}">
+                              {% endif %}
+                          {% endfor %}
+                      {% endif %}
+          
+                      <div class="form-row">
+                          <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                              <div class="form-group">
+          
+                                  <div class="row">
+          
+                                      <div class="col-1 mr-auto">
+                                          <label for="message" class="col-form-label">Message:</label>
+                                      </div>
+          
+                                      <div class="col-10 ml-auto">
+                                          <textarea   name="message" 
+                                                      id="message" 
+                                                      class="form-control" 
+                                                      maxlength="4096" 
+                                                      onkeyup="textCounter(this,'counter',4096);" 
+                                                      autofocus required 
+                                                      style="height: 200px; " ></textarea>
+          
+                                          <input  
+                                                  disabled  
+                                                  maxlength="4" 
+                                                  size="4" 
+                                                  value="4096" 
+                                                  id="counter" 
+                                                  style="background-color: rgb(255, 255, 255); border: none; right: 0px;" ></input>
+                                      </div>
+                                      
+          
+                                  </div>
+                                  
+                                  
+                              </div>
+                          </div>
+                      </div>
+                      
+                      <div class="form-row" >
+          
+                          <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                              <div class="form-group">
+          
+                                  <div class="row">
+          
+                                      <div class="col-2 mr-auto" >
+                                          <label for="myfile" class="col-form-label">Attach a file:</label>
+                                      </div>
+          
+                                      <div class="col-10  ml-auto " >
+                                          <input type="file" id="myfile" name="myfile">
+                                      </div>
+          
+                                  </div>
+          
+          
+                              </div>
+                          </div>
+                      </div>
+          
+                      
+                      
+          
+                      <!-- Submit button -->
+                      <div class="form-row">
+                          <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
+                              <div class="form-group">
+                                <button class="btn  text-capitalize font-weight-bold  text-light btn-block" 
+                                        type="submit"
+                                        value="Send" 
+                                        onClick="return empty()"
+                                        style="background: #b5b5b5;">
+                                        Send
+                                </button>
+                              </div>
+                          </div>
+                      </div>
+                      
+          
+                    </form>
+                </div>
+                
+              </div>
+
+              <div class="row" id="reply_button">
+                  <div class="col-12">
+                      <button class=" btn btn-gray  text-light ml-0" 
+                        style="background-color: #6c757d;"
+                              type="button"
+                              onclick="showStuff('answer1', 'text1', this); return false;">Reply</button>
+                  </div>
+              </div>
+                  
+            {% else %}
+              <div class="col-lg-12 col-md-6 col-sm-12 col-xs-12">  
+                  
+                  <div class="col-xs-6 col-sm-6 col-md-12">
+                    <div class="contenier">
+                      <h5>List of messages</h5>
+                      <p>no records found.</p>
+                    </div>
+                  </div>     
+
+              </div> 
+            {% endif%} 
+
+
+          </div>
+          
+          <div class="row">
+            <div class="col-md-12">
+              {% if replies.has_other_pages %}
+              <ul class="pagination">
+                {% if replies.has_previous %}
+                  <li class="page-item">
+                    <a href="?page={{replies.previous_page_number}}" class="page-link">&laquo;</a>
+                  </li>
+                {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">&laquo;</a>
+                </li>
+                {% endif %}
+    
+                {% for i in replies.paginator.page_range %}
+                  {% if replies.number == i %}
+                    <li class="page-item active" >
+                      <a class="page-link">{{i}}</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item">
+                      <a href="?page={{i}}" class="page-link" >{{i}}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+                
+                {% if replies.has_next %}
+                  <li class="page-item">
+                    <a href="?page={{replies.next_page_number}}" class="page-link">&raquo;</a>
+                  </li>
+                {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">&raquo;</a>
+                </li>
+                {% endif %}
+    
+              </ul>
+              {% endif %}
+            </div>
+            
+          </div>
+          
+        </div>
+          
+
+      </div>
+
+
+  </div>
+</div>
+<!-- dashboard content -->
+
+</div>
+
+<script>
+  document.getElementById("reply").style.display = 'none';
+  function showStuff() {
+      if( document.getElementById("reply").style.display == 'none'){
+          document.getElementById("reply").style.display = 'block';
+          document.getElementById("reply_button").style.display = 'none';
+          //document.getElementById("reply_button").innerHTML.text = 'Close';
+      }
+      //else{
+      //    document.getElementById("reply").style.display = 'none';
+          //document.getElementById("reply_button").innerHTML.text = 'Reply';
+      //}
+      
+  }
+</script>
+
+
+{% endblock %}

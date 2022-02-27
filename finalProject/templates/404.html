@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extrahead %}
+<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+{{ block.super }}
+{% endblock %}
+
+{% block title %} | Page Not Found {% endblock %}
+
+<style>
+    .jumbotron-image {
+        
+        background: white url("{% static 'img/404.png' %}") no-repeat;
+
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    
+</style>
+
+{% block content %}
+
+
+<div class="container pt-3">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="background-color: #FFF;">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}" class="text-dark">
+                    <i class="fas fa-home"></i> Home</a>
+                </li>
+
+                <!-- <li class="breadcrumb-item">
+                    <a href="{% url 'services' %}" class="text-dark">
+                        Services </a>
+                </li>
+
+                <li class="breadcrumb-item "> Railway</li> -->
+                </ol>
+                
+    </nav>
+</div>
+
+
+<div class="container mb-5 py-3 z-depth-0 ">
+
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <img class="jumbotron-image" src="{% static 'img/404.png' %}">
+        <h1 class="display-3">Error 404</h1>
+        <p>Page not found.</p>
+        <p><a class="btn btn-primary btn-lg" href="{% url 'index' %}" role="button">Take me Home &raquo;</a></p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} | Received Quotes {% endblock %}
+
+{% block content %}
+
+<style>
+  th {
+    background-color:#d3d3d3;
+    width: 100%;
+  }
+  a:hover{
+    text-decoration: none;
+  }
+</style>
+
+
+<div class="container mb-3">
+  <!-- Breadcrumb -->
+<div class="container pt-3">
+  <nav aria-label="breadcrumb">
+              <ol class="breadcrumb" style="background-color: #FFF;">
+
+              <li class="breadcrumb-item">
+                  <a href="{% url 'index' %}" class="text-dark">
+                  <i class="fas fa-home"></i> Home</a>
+              </li>
+              
+              <li class="breadcrumb-item">
+                  <a href="{% url 'dashboard' %}" class="text-dark">
+                    Dashboard
+                  </a>
+              </li>
+
+              {% if user.is_authenticated %}
+                <li class="breadcrumb-item active">Received Quotes</li>
+              {% endif %}
+              </ol>
+              
+  </nav>
+</div>
+<!-- Breadcrumb -->
+
+
+<!-- dashboard content -->
+<div class="container z-depth-1 pb-3">
+  <div class="row">
+
+      <!-- sidebar -->
+      <div class="col-md-4 col-xl-4  mt-3">
+        
+        {% include 'partials/_dashboard_base.html' %}
+          
+      </div>
+
+      <!-- content -->
+        <div class="col-md-8 pt-2">
+
+          <h3> List of Received Quotes </h3>
+          <hr>
+
+          <div class="row">
+
+            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+              
+
+                  
+                    
+                <div class="table-responsive-xl">
+                  <table class="table table-sm table-hover">
+                      
+                      <thead>
+                      <tr>
+                          <!-- <th class="text-left" style="width: auto;" scope="col"></th> -->
+                          <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Subject </th>
+
+                          <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Customer</th>
+                          <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Company</th>
+                          <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Date</th>
+                          <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Answered by</th>
+                          <th scope="col" class="text-center bg-white font-weight-bold" style="width: auto;"></th>
+                          
+                      </tr>
+                      </thead>
+
+                      <tbody>
+                        
+
+                        {% if wish_items %}
+                        {% for item in wish_items %}
+                      <tr >
+                          <!-- <th class="text-center " style="width: auto;" scope="row">{{ forloop.counter }}</th> -->
+                          <td {% if not item.quote.is_opened_admin or item.has_unread %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: rgb(0, 0, 138); font-weight: bold;"
+                              {% else %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: black; font-weight: normal;"
+                              {% endif %}>
+                            {% for it in item.wish_item %}
+                            {% if forloop.counter0 == 0 %}
+                              {{ it.title }} 
+                            {% endif %}
+                            {% endfor %}
+                          </td>
+                          <td {% if not item.quote.is_opened_admin or item.has_unread %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: rgb(0, 0, 138); font-weight: bold;"
+                              {% else %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: black; font-weight: normal;"
+                              {% endif %} >{% if item.quote.owner.title %}{{item.quote.owner.title}}{% endif %} {{ item.quote.owner.get_full_name }}</td>
+                          <td {% if not item.quote.is_opened_admin or item.has_unread %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: rgb(0, 0, 138); font-weight: bold;"
+                              {% else %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: black; font-weight: normal;"
+                              {% endif %} >{{ item.quote.owner.company }}</td>
+                          <td {% if not item.quote.is_opened_admin or item.has_unread %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: rgb(0, 0, 138); font-weight: bold;"
+                              {% else %}
+                                class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                                style="color: black; font-weight: normal;"
+                              {% endif %} >{{ item.quote.creation_date|date:"d/m/Y-G:i" }}  {% if item.quote.attached_file %}  <i class="fa fa-paperclip" aria-hidden="true"></i>{% endif %}</td>
+                          <td {% if not item.quote.is_opened_admin or item.has_unread %}
+                              class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}"
+                              style="color: rgb(0, 0, 138); font-weight: bold;"
+                            {% else %}
+                              class="text-left clickable-row" data-href="{% url 'quote_details' item.quote.id %}" 
+                              style="color: black; font-weight: normal;"
+                            {% endif %} >
+                            
+                            {{ item.latest_answer_owner.owner.get_full_name }}
+                            
+                          </td>
+                          <td class="text-center font-weight-bold">
+                            
+                            <form method="post" id="delete_quote_from_received_quotes" data-url="{% url 'received_quotes' %}">
+                              {% csrf_token %}
+                              <input type="hidden" name="quote_id" value="{{ item.quote.id }}">
+                              <!-- <input type="hidden" name="sender_id" value="{{ contact.sender_id }}">
+                              <input type="hidden" name="receiver_id" value="{{ contact.receiver_id }}">
+                              <input type="hidden" name="chat_id" value="{{ contact.chat_id }}"> -->
+  
+                              <button type="submit" class="btn btn-light  confirm-delete" aria-label="sync" name="delete_quote_from_received_quotes_button" id="delete_quote_from_received_quotes_button">
+                                <span class="fas fa-trash-alt fa-md" aria-hidden="true"></span>
+                                <!-- fas fa-trash-alt 
+                                fa fa-trash
+                                far fa-trash-alt  -->
+                              </button>
+                            </form>
+                            
+                          </td>
+                          
+                        
+                          <!-- {{ item.wish_item.title }} -->
+
+                      </tr>
+                      {% endfor %}
+                      {% endif %}
+
+                      
+
+                      </tbody>
+
+                  </table>
+                  </div>
+
+                  
+                      
+                  
+
+
+              
+            </div>
+            
+            <div class="row">
+              <div class="col-md-12">
+                {% if user_quotes.has_other_pages %}
+                <ul class="pagination">
+                  {% if user_quotes.has_previous %}
+                    <li class="page-item">
+                      <a href="?page={{user_quotes.previous_page_number}}" class="page-link">&laquo;</a>
+                    </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link">&laquo;</a>
+                  </li>
+                  {% endif %}
+      
+                  {% for i in user_quotes.paginator.page_range %}
+                    {% if user_quotes.number == i %}
+                      <li class="page-item active">
+                        <a class="page-link">{{i}}</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item">
+                        <a href="?page={{i}}" class="page-link">{{i}}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                  
+                  {% if user_quotes.has_next %}
+                    <li class="page-item">
+                      <a href="?page={{user_quotes.next_page_number}}" class="page-link">&raquo;</a>
+                    </li>
+                  {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link">&raquo;</a>
+                  </li>
+                  {% endif %}
+      
+                </ul>
+                {% endif %}
+              </div>
+              
+          </div>
+            
+
+        </div>
+
+
+  </div>
+</div>
+<!-- dashboard content -->
+
+</div>
+
+</div>
+<script>
+  jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+  });
+</script>
+<script>
+  $(document).on('click', '.confirm-delete', function(){
+    return confirm('Are you sure you want to delete this?');
+  })
+</script>
+{% endblock %}
+
+
+

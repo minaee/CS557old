@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} | User Dashboard {% endblock %}
+
+{% block content %}
+
+<div class="container mb-5">
+  
+<!-- Breadcrumb -->
+<div class="container pt-3">
+  <nav aria-label="breadcrumb">
+              <ol class="breadcrumb" style="background-color: #FFF;">
+
+              <li class="breadcrumb-item">
+                  <a href="{% url 'index' %}" class="text-dark">
+                  <i class="fas fa-home"></i> Home</a>
+              </li>
+
+              {% if user.is_authenticated %}
+                <li class="breadcrumb-item text-capitalize"> Dashboard</li>
+              {% endif %}
+              </ol>
+              
+  </nav>
+</div>
+<!-- Breadcrumb -->
+
+<!-- Alerts -->
+<!-- {% include 'partials/_alerts.html' %} -->
+
+<!-- dashboard content -->
+<div class="container z-depth-1 pb-3">
+  <div class="row">
+
+    <!-- sidebar -->
+    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 offset-xl-0 my-3 py-1">
+        
+      {% include 'partials/_dashboard_base.html' %}
+
+    </div>
+
+    
+
+    <!-- content -->
+    <div class="col-12 col-sm-12 col-md-9 col-lg-9 col-xl-9 my-3" >
+
+      <!-- Last login -->
+      <div class="row">
+        
+
+        <!-- <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"> -->
+          {% if user.is_superuser %}
+            <div class="mr-auto ml-3 font-weight-bold ">
+              Admin Area
+            </div>
+          {% endif %}
+
+          <div class="ml-auto mr-3">
+            <!-- Last login: {{user.last_login}} -->
+            Previous visit: {{ user.previous_visit|date:"D d F, Y, G:i" }}
+          </div>
+          
+        <!-- </div> -->
+      </div>
+
+
+      <!-- Greetings -->
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-3">
+          <h1 class="text-capitalize mb-0 ml-0 pb-0" > {{ user.first_name}} {{ user.last_name}} </h1>
+
+          <p class="mt-0 pt-0">Customer ID: {{user.user_id }}</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-3">
+          <p>Here you can edit your profile and see a history of your orders and check your basket (favorit items).</p>
+        </div>
+      </div>
+
+    </div>
+      
+  </div>
+</div>
+</div>
+
+{% endblock %}

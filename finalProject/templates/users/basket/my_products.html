@@ -1,0 +1,1787 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load tz %}
+{% load l10n %}
+
+{% block title %} | My Quote List {% endblock %}
+
+{% block content %}
+
+<style>
+  .categoryItems {
+    text-indent: 5px;
+  }
+
+  .value-button {
+  display: inline-block;
+  border: 1px solid #ddd;
+  margin: 0px;
+  width: 40px;
+  height: 20px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 11px 0;
+  background: #eee;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  }
+
+  .value-button:hover {
+    cursor: pointer;
+  }
+
+  form .decrease {
+    margin-right: -4px;
+    border-radius: 8px 0 0 8px;
+
+    width: 44px;
+    height: 44px;
+  }
+
+  form .increase {
+    margin-left: -4px;
+    border-radius: 0 8px 8px 0;
+
+    width: 44px;
+    height: 44px;
+  }
+
+  form #input-wrap {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  input#count {
+    text-align: center;
+    border: none;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin: 0px;
+    width: 40px;
+    height: 40px;
+  }
+
+  /* input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  } */
+
+  input[type="number"] {
+    width:5vw !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    text-align: center;
+    border: none;
+    border: 1px solid #ddd;
+    margin: 0px;
+    
+  }
+
+  input[type="number"] .webinars{
+
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    text-align: center;
+    border: 1px solid #ddd;
+    
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: textfield;
+    margin: 0;
+    border: 1;
+  }
+
+  /* <!-- Firefox --> */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  .modal-dialog-scrollable .modal-content {
+    max-height: calc(100vh - 1rem);
+    overflow: scroll;
+  }
+  
+  .hidden {position:absolute;visibility:hidden;opacity:0;}
+  input[type=checkbox] + label {
+    /* color: rgb(107, 107, 107);
+    background-color: #ccc; */
+    font-style: normal;
+  } 
+  input[type=checkbox]:checked + label   {
+    /* color: rgb(255, 255, 255);
+    background-color: rgb(94, 94, 94); */
+    font-style: normal !important;
+    /* font-weight: bold  !important; */
+    padding: 0;
+    border: 5px solid rgb(33, 150, 4);
+  }
+
+  
+  
+
+  
+  abbr[title] {
+    border-bottom: none !important;
+    cursor: inherit !important;
+    text-decoration: none !important;
+  }
+
+  @media (min-width: 768px) {
+    .modal-xl {
+      width: 90%;
+    max-width:1200px;
+    }
+  }
+</style>
+<div class="container mb-5">
+  
+<!-- Breadcrumb -->
+<div class="container pt-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="background-color: #FFF;">
+
+      <li class="breadcrumb-item">
+          <a href="{% url 'index' %}" class="text-dark">
+          <i class="fas fa-home"></i> Home</a>
+      </li>
+
+      <li class="breadcrumb-item">
+        <a href="{% url 'dashboard' %}" class="text-dark">
+              Dashboard</a>
+      </li>
+
+      <li class="breadcrumb-item active">My Quote List</li>
+    
+    </ol>
+              
+  </nav>
+</div>
+<!-- Breadcrumb -->
+
+<!-- dashboard content -->
+<div class="container z-depth-1 pb-3">
+  <div class="row">
+
+    <!-- sidebar -->
+    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 offset-xl-0 my-3 ">
+        
+      {% include 'partials/_dashboard_base.html' %}
+
+    </div>
+
+    
+
+    <!-- content -->
+    <div class="col-12 col-sm-12 col-md-9 col-lg-9 col-xl-9 my-3" >
+
+      <div class="row">
+        <!-- Alerts -->
+        {% include 'partials/_alerts.html' %}
+        <!-- Aletrs -->
+      </div>
+      <!-- Last login -->
+      <div class="row">
+        
+          <div class="col-6 font-weight-bold d-flex align-items-center">
+
+            <div class="row">
+              <div class="col-12">
+                <h2 class="text-capitalize mb-0 ml-0 pb-0" > {{ user.first_name}} {{ user.last_name}} </h2>
+              </div>
+              <div class="col-12"> 
+                <p class="mt-0 pt-0">Customer ID: {{user.user_id }}</p>
+              </div>
+            </div>
+            
+          </div>
+
+          <div class="col-6 d-flex " style="color: rgb(109, 109, 109);">
+            <div class="ml-auto">
+              <button type="button" class="btn text-dark " data-toggle="modal" data-target="#add_wishlist_Modal">
+                <abbr title = "Add to your Quote List"><i class="fas fa-plus fa-2x "></i></abbr> 
+              </button> 
+            </div>
+          </div>
+          
+      </div>
+
+
+      <!-- Greetings -->
+      <!-- <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-3">
+          <h2 class="text-capitalize mb-0 ml-0 pb-0" > {{ user.first_name}} {{ user.last_name}} </h2>
+
+          <p class="mt-0 pt-0">Customer ID: {{user.user_id }}</p>
+        </div>
+      </div> -->
+
+      <!-- <div class="row">
+
+        <form method="post" id="data_to_plot_form" data-url="{% url 'my_products' %}">
+          {% csrf_token %}
+
+          <fieldset>
+
+            <legend>Choose Category</legend>
+            
+            <div class="form-row">
+                <button type="button" id="data_to_plot_products" class="btn" >Products</button>
+                <button type="button" id="data_to_plot_services" class="btn" >Services</button>
+            </div>
+            
+          </fieldset>
+
+        </form>
+
+      </div>
+
+      <div class="row">
+        <div class="col-12 my-4" id="graph">
+        </div>
+      </div> -->
+
+
+      <div class="row">
+        
+        <!-- <div class="col-12 d-flex flex-row-reverse">
+          <button type="button" class="btn text-dark" data-toggle="modal" data-target="#add_wishlist_Modal">
+            <abbr title = "Add to your Quote List"><i class="fas fa-plus fa-2x "></i></abbr> </span>
+          </button>  
+        </div> -->
+        
+
+        <div class="modal fade bd-example-modal-lg" id="add_wishlist_Modal" tabindex="-1" aria-labelledby="add_wishlist_ModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" >
+            <div class="modal-content">
+
+              <form method="post" id="add_to_wishlist" data-url="{% url 'my_products' %}">
+                {% csrf_token %}
+
+                <div class="modal-header my-0">
+                  <!-- <h5 class="modal-title" id="add_wishlist_ModalLabel"> Add to Quote List </h5> -->
+                  <button type="submit" name="add_to_wishlist_button" id="add_to_wishlist_button" class="btn btn-dark ml-auto">Add to Quote</button>
+                  <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button> -->
+                </div>
+                
+                <div class="modal-body">
+                  <!-- <div class="container-fluid">
+
+                    <div class="row">
+                      <div class="col-12"> -->
+
+                        <ul class="nav nav-tabs pb-4" id="myTab" role="tablist" >
+                          
+                          {% if queries_services %}
+                          
+                            <li class="nav-item" role="presentation" >
+                              <a class="nav-link active main-tabs" id="services-tab" data-toggle="tab" href="#services" role="tab" aria-controls="services" aria-selected="true" >Services</a>
+                            </li>
+                          
+                          {% endif %}
+
+                          {% if queries_products %}
+                          
+                            <li class="nav-item mx-1" role="presentation" >
+                              <a class="nav-link main-tabs" id="products-tab" data-toggle="tab" href="#products" role="tab" aria-controls="products" aria-selected="true" >Products</a>
+                            </li>
+                          
+                          {% endif %}
+
+                          {% if tranings %}
+                          
+                            <li class="nav-item" role="presentation" >
+                              <a class="nav-link main-tabs" id="tranings-tab" data-toggle="tab" href="#tranings" role="tab" aria-controls="tranings" aria-selected="true" >Tranings</a>
+                            </li>
+                          
+                          {% endif %}
+
+                          
+                        </ul>
+                        
+                        <div class="tab-content mt-4" id="myTabContent">
+                          
+                           <div class="tab-pane fade show " id="products" role="tabpanel" aria-labelledby="products-tab">
+                            <div class="row my-3">
+                            {% if queries_products %}
+                            {% for item in queries_products %}
+                              <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3 col-xl-3  mx-auto">
+                                <div class="card mx-0">
+
+                                  {% if item.cover %}
+                                  <img  class="card-img-top img-fluid img-responsive p-1" 
+                                        src="{{ item.cover.url }}" 
+                                        style=" height: 150px; width: 100%;" 
+                                        alt="image cap">
+                                  {% elif item.icon %}
+                                        <img  class="card-img-top img-fluid img-responsive p-1" 
+                                              src="{{ item.icon.url }}" 
+                                              style=" height: 150px; width: 100%;" 
+                                              alt="image cap">
+                                  {% endif %}
+
+                                  <div class="card-body p-1">
+
+                                    <div class="row">
+                                      
+                                      <div class="col-12  text-center">
+                                        <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                        {% if item.type == 'water_quality_sensor' %}
+                                          <a href="{% url 'water_sensor_item' item.title %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                        {% elif item.type == 'smartflow' %}
+                                          <a href="{% url 'valve' item.title %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                        {% elif item.type == 'ip_sensor' %}
+                                          <a href="{% url 'ip_sensor_item' item.title %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                        {% elif item.type == 'accessories' %}
+                                          <a href="{% url 'accessories' %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                        {% endif %}
+                                      </div>
+
+                                      <!-- <div class="col-12 text-center">
+                                        <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p>
+                                      </div> -->
+
+                                      <div class="col-12">
+                                        <div class="form-group">
+
+                                          <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                          <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                          <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                          <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                          {% if item.price %}
+                                            <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                          {% else %}
+                                            <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                          {% endif %}
+                                          <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                          <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+
+                                          <div class="form-row">
+
+                                            <div class="col-4  d-flex justify-content-end " >
+                                              <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value">-</div>
+                                            </div>
+
+                                            <div class="col-4  mx-0 px-0" >
+                                              <input  type="number" 
+                                                      id="count_{{ item.type }}{{ item.id }}" 
+                                                      name="count_{{ item.title }}{{ item.type }}" 
+                                                      placeholder="count{{ item.type }}{{ item.id }}" 
+                                                      class="form-control mx-0 px-0"
+                                                      value="0"
+                                                      min="0"
+                                                      max="9999"
+                                                      style="font-size: 20px;"
+                                                      autofocus/>
+                                            </div>
+
+                                            <div class="col-4  " >
+                                              <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value">+</div>
+                                            </div>
+
+                                          </div>
+                                          
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                    
+                                  </div>
+                                  
+                                </div>
+                              </div>
+                            {% endfor %}
+                            {% endif %}
+                            </div>
+                          </div>
+
+                          <div class="tab-pane fade show active" id="services" role="tabpanel" aria-labelledby="services-tab">
+                            <div class="row my-3">
+                              <!-- <div class="container">
+
+                                <div class="row"> -->
+
+                                  <div class="col-xs-12 col-sm-12 col-md-3">
+                                    <ul class="nav nav-tabs flex-md-column" id="serviceTabs" role="tablist" aria-orientation="vertical">
+
+                                      {% if automotive %}
+                                      <li class="nav-item" role="presentation" >
+                                        <a class="nav-link services-tabs active" id="automotive-tab" data-toggle="tab" href="#automotive" role="tab" aria-controls="automotive" aria-selected="true" >Automotive</a>
+                                      </li>
+                                      {% endif %}
+                                    
+                                      {% if avionics %}
+                                      <li class="nav-item" role="presentation" >
+                                        <a class="nav-link services-tabs" id="avionics-tab" data-toggle="tab" href="#avionics" role="tab" aria-controls="avionics" aria-selected="true" >Avionics</a>
+                                      </li>
+                                      {% endif %}
+
+                                      {% if digital_transformation %}
+                                      <li class="nav-item" role="presentation" >
+                                        <a class="nav-link services-tabs" id="digital_transformation-tab" data-toggle="tab" href="#digital_transformation" role="tab" aria-controls="digital_transformation" aria-selected="true" >Digital Transformation</a>
+                                      </li>
+                                      {% endif %}
+
+                                      {% if healthcare %}
+                                      <li class="nav-item" role="presentation" >
+                                        <a class="nav-link services-tabs" id="healthcare-tab" data-toggle="tab" href="#healthcare" role="tab" aria-controls="healthcare" aria-selected="true" >Healthcare</a>
+                                      </li>
+                                      {% endif %}
+
+                                      {% if precise_farming %}
+                                      <li class="nav-item" role="presentation" >
+                                        <a class="nav-link services-tabs" id="precise_farming-tab" data-toggle="tab" href="#precise_farming" role="tab" aria-controls="precise_farming" aria-selected="true" >Precise Farming</a>
+                                      </li>
+                                      {% endif %}
+
+                                      {% if railway %}
+                                      <li class="nav-item" role="presentation" >
+                                        <a class="nav-link services-tabs" id="railway-tab" data-toggle="tab" href="#railway" role="tab" aria-controls="railway" aria-selected="true" >Railway</a>
+                                      </li>
+                                      {% endif %}
+            
+                                      
+                                    </ul>
+                                  </div>
+
+                                  <div class="col-xs-12 col-sm-12 col-md-9">
+                                    <div class="tab-content" id="myTabContent">
+
+                                      <div class="tab-pane fade show active" id="automotive" role="tabpanel" aria-labelledby="automotive-tab">
+                                        <div class="row my-3">
+                                          {% if automotive %}
+                                          {% for item in automotive %}
+                                          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6  mx-auto">
+
+                                            <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                            <label class="btn" for="check_{{ item.title }}{{ item.type }}">
+                                            <div class=" mx-0">
+                                              {% if item.cover %}
+                                              <img  class="card-img-top img-fluid img-responsive p-1" 
+                                                    src="{{ item.cover.url }}" 
+                                                     
+                                                    alt="image cap">
+                                              {% endif %}
+                                              <div class="card-body p-1">
+            
+                                                <div class="row">
+                                                  
+                                                  <div class="col-12  text-center">
+                                                    <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                                    {% if item.type == 'automotive' %}
+                                                      <a href="{% url 'automotive'  %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                                    {% endif %}
+                                                  </div>
+            
+                                                  <!-- <div class="col-12 text-center">
+                                                    <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p>
+                                                    
+                                                  </div> -->
+            
+                                                  <div class="col-12">
+                                                    <div class="form-group">
+            
+                                                      <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                                      <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                                      <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                                      <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                                      {% if item.price %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                                      {% else %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                                      {% endif %}
+                                                      <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+            
+                                                      
+                                                      <div class="form-row" >
+            
+                                                        <!-- <div class="col-4  d-flex justify-content-end " >
+                                                          <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value">-</div>
+                                                        </div>
+            
+                                                        <div class="col-4  mx-0 px-0" >
+                                                          <input  type="number" 
+                                                                  id="count_{{ item.type }}{{ item.id }}" 
+                                                                  name="count_{{ item.title }}{{ item.type }}" 
+                                                                  placeholder="count{{ item.type }}{{ item.id }}" 
+                                                                  class="form-control mx-0 px-0"
+                                                                  value="0"
+                                                                  min="0"
+                                                                  max="9999"
+                                                                  autofocus/>
+                                                        </div>
+            
+                                                        <div class="col-4  " >
+                                                          <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value">+</div>
+                                                        </div> -->
+                                                        
+                                                        <!-- <div class="mx-auto"> -->
+                                                          <!-- <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                                          <label class="btn" for="check_{{ item.title }}{{ item.type }}">Request a Quote</label> -->
+                                                        <!-- </div> -->
+
+                                                      </div>
+                                                      
+                                                      
+            
+                                                    </div>
+                                                  </div>
+            
+                                                </div>
+                                                
+                                              </div>
+                                            </div>
+                                            </label>
+
+                                          </div>
+                                          {% endfor %}
+                                          {% endif %}
+                                        </div>
+                                      </div>
+    
+                                      <div class="tab-pane fade show " id="avionics" role="tabpanel" aria-labelledby="avionics-tab">
+                                        <div class="row my-3">
+                                          {% if avionics %}
+                                          {% for item in avionics %}
+                                          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6  mx-auto">
+                                            
+                                            <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                            <label class="btn" for="check_{{ item.title }}{{ item.type }}">
+                                            <div class=" mx-0">
+                                              {% if item.cover %}
+                                              <img  class="card-img-top img-fluid img-responsive p-1" 
+                                                    src="{{ item.cover.url }}" 
+                                                     
+                                                    alt="image cap">
+                                              {% endif %}
+                                              <div class="card-body p-1">
+            
+                                                <div class="row">
+                                                  
+                                                  <div class="col-12  text-center">
+                                                    <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                                    {% if item.type == 'avionics' %}
+                                                      <a href="{% url 'avionics' %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                                    {% endif %}
+                                                  </div>
+            
+                                                  <!-- <div class="col-12 text-center">
+                                                    <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p>
+                                                    
+                                                  </div> -->
+            
+                                                  <div class="col-12">
+                                                    <div class="form-group">
+            
+                                                      <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                                      <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                                      <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                                      <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                                      {% if item.price %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                                      {% else %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                                      {% endif %}
+                                                      <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+            
+                                                      <!-- <input type="hidden" name="item_tag" value="{{ item.type }}">
+                                                      <input type="hidden" name="tag_{{ item.id }}_{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                      <input type="hidden" name="title_{{ item.id }}" value="{{ item.title }}"> -->
+                                                      
+            
+                                                      <div class="form-row">
+            
+                                                        <!-- <div class="col-4  d-flex justify-content-end " >
+                                                          <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value">-</div>
+                                                        </div>
+            
+                                                        <div class="col-4  mx-0 px-0" >
+                                                          <input  type="number" 
+                                                                  id="count_{{ item.type }}{{ item.id }}" 
+                                                                  name="count_{{ item.title }}{{ item.type }}" 
+                                                                  placeholder="count{{ item.type }}{{ item.id }}" 
+                                                                  class="form-control mx-0 px-0"
+                                                                  value="0"
+                                                                  min="0"
+                                                                  max="9999"
+                                                                  autofocus/>
+                                                        </div>
+            
+                                                        <div class="col-4  " >
+                                                          <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value">+</div>
+                                                        </div> -->
+
+                                                        <!-- <div class="mx-auto"> -->
+                                                          <!-- <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                                          <label class="btn" for="check_{{ item.title }}{{ item.type }}"><small>Request a Quote</small></label> -->
+                                                        <!-- </div> -->
+
+                                                      </div>
+                                                      
+            
+                                                    </div>
+                                                  </div>
+            
+                                                </div>
+                                                
+                                              </div>
+                                            </div>
+                                            </label>
+
+                                          </div>
+                                          {% endfor %}
+                                          {% endif %}
+                                        </div>
+                                      </div>
+
+                                      <div class="tab-pane fade show " id="digital_transformation" role="tabpanel" aria-labelledby="digital_transformation-tab">
+                                        <div class="row my-3">
+                                          {% if digital_transformation %}
+                                          {% for item in digital_transformation %}
+                                          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6  mx-auto">
+
+                                            <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                            <label class="btn" for="check_{{ item.title }}{{ item.type }}">
+                                            <div class=" mx-0">
+                                              {% if item.cover %}
+                                              <img  class="card-img-top img-fluid img-responsive p-1" 
+                                                    src="{{ item.cover.url }}" 
+                                                     
+                                                    alt="image cap">
+                                              {% endif %}
+                                              <div class="card-body p-1">
+            
+                                                <div class="row">
+                                                  
+                                                  <div class="col-12  text-center">
+                                                    <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                                    {% if item.type == 'digital_transformation' %}
+                                                      <a href="{% url 'digital_transformation' %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                                    {% endif %}
+                                                  </div>
+            
+                                                  <!-- <div class="col-12 text-center">
+                                                    <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p>
+                                                    
+                                                  </div> -->
+            
+                                                  <div class="col-12">
+                                                    <div class="form-group">
+            
+                                                      <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                                      <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                                      <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                                      <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                                      {% if item.price %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                                      {% else %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                                      {% endif %}
+                                                      <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+            
+                                                      <!-- <input type="hidden" name="item_tag" value="{{ item.type }}">
+                                                      <input type="hidden" name="tag_{{ item.id }}_{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                      <input type="hidden" name="title_{{ item.id }}" value="{{ item.title }}"> -->
+                                                      
+            
+                                                      <div class="form-row">
+            
+                                                        <!-- <div class="col-4  d-flex justify-content-end " >
+                                                          <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value">-</div>
+                                                        </div>
+            
+                                                        <div class="col-4  mx-0 px-0" >
+                                                          <input  type="number" 
+                                                                  id="count_{{ item.type }}{{ item.id }}" 
+                                                                  name="count_{{ item.title }}{{ item.type }}" 
+                                                                  placeholder="count{{ item.type }}{{ item.id }}" 
+                                                                  class="form-control mx-0 px-0"
+                                                                  value="0"
+                                                                  min="0"
+                                                                  max="9999"
+                                                                  autofocus/>
+                                                        </div>
+            
+                                                        <div class="col-4  " >
+                                                          <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value">+</div>
+                                                        </div> -->
+
+                                                        <!-- <div class="mx-auto"> -->
+                                                          <!-- <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                                          <label class="btn" for="check_{{ item.title }}{{ item.type }}"><small>Request a Quote</small></label> -->
+                                                        <!-- </div> -->
+            
+                                                      </div>
+                                                      
+            
+                                                    </div>
+                                                  </div>
+            
+                                                </div>
+                                                
+                                              </div>
+                                            </div>
+                                            </label>
+
+                                          </div>
+                                          {% endfor %}
+                                          {% endif %}
+                                        </div>
+                                      </div>
+
+                                      <div class="tab-pane fade show " id="healthcare" role="tabpanel" aria-labelledby="healthcare-tab">
+                                        <div class="row my-3">
+                                          {% if healthcare %}
+                                          {% for item in healthcare %}
+                                          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6  mx-auto">
+                                            
+                                            <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                            <label class="btn" for="check_{{ item.title }}{{ item.type }}">
+                                            <div class="mx-0">
+                                              {% if item.cover %}
+                                              <img  class="card-img-top img-fluid img-responsive p-1" 
+                                                    src="{{ item.cover.url }}" 
+                                                     
+                                                    alt="image cap">
+                                              {% endif %}
+                                              <div class="card-body p-1">
+            
+                                                <div class="row">
+                                                  
+                                                  <div class="col-12  text-center">
+                                                    <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                                    {% if item.type == 'healthcare' %}
+                                                      <a href="{% url 'healthcare' %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                                    {% endif %}
+                                                  </div>
+            
+                                                  <!-- <div class="col-12 text-center">
+                                                    <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p>
+                                                    
+                                                  </div> -->
+            
+                                                  <div class="col-12">
+                                                    <div class="form-group">
+            
+                                                      <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                                      <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                                      <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                                      <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                                      {% if item.price %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                                      {% else %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                                      {% endif %}
+                                                      <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+            
+                                                      <!-- <input type="hidden" name="item_tag" value="{{ item.type }}">
+                                                      <input type="hidden" name="tag_{{ item.id }}_{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                      <input type="hidden" name="title_{{ item.id }}" value="{{ item.title }}"> -->
+                                                      
+            
+                                                      <div class="form-row">
+            
+                                                        <!-- <div class="col-4  d-flex justify-content-end " >
+                                                          <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value">-</div>
+                                                        </div>
+            
+                                                        <div class="col-4  mx-0 px-0" >
+                                                          <input  type="number" 
+                                                                  id="count_{{ item.type }}{{ item.id }}" 
+                                                                  name="count_{{ item.title }}{{ item.type }}" 
+                                                                  placeholder="count{{ item.type }}{{ item.id }}" 
+                                                                  class="form-control mx-0 px-0"
+                                                                  value="0"
+                                                                  min="0"
+                                                                  max="9999"
+                                                                  autofocus/>
+                                                        </div>
+            
+                                                        <div class="col-4  " >
+                                                          <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value">+</div>
+                                                        </div> -->
+
+                                                        <!-- <div class="mx-auto">
+                                                          <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                                          <label class="btn" for="check_{{ item.title }}{{ item.type }}"><small>Request a Quote</small></label>
+                                                        </div> -->
+            
+                                                      </div>
+                                                      
+            
+                                                    </div>
+                                                  </div>
+            
+                                                </div>
+                                                
+                                              </div>
+                                            </div>
+                                            </label>
+
+                                          </div>
+                                          {% endfor %}
+                                          {% endif %}
+                                        </div>
+                                      </div>
+
+                                      <div class="tab-pane fade show " id="precise_farming" role="tabpanel" aria-labelledby="precise_farming-tab">
+                                        <div class="row my-3">
+                                          {% if precise_farming %}
+                                          {% for item in precise_farming %}
+                                          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6  mx-auto">
+                                            
+                                            <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                            <label class="btn" for="check_{{ item.title }}{{ item.type }}">
+                                            <div class="mx-0">
+                                              {% if item.cover %}
+                                              <img  class="card-img-top img-fluid img-responsive p-1" 
+                                                    src="{{ item.cover.url }}" 
+                                                     
+                                                    alt="image cap">
+                                              {% endif %}
+                                              <div class="card-body p-1">
+            
+                                                <div class="row">
+                                                  
+                                                  <div class="col-12  text-center">
+                                                    <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                                    {% if item.type == 'precise_farming' %}
+                                                      <a href="{% url 'precise_farming' %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                                    {% endif %}
+                                                  </div>
+            
+                                                  <!-- <div class="col-12 text-center">
+                                                    <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p>
+                                                    
+                                                  </div> -->
+            
+                                                  <div class="col-12">
+                                                    <div class="form-group">
+            
+                                                      <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                                      <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                                      <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                                      <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                                      {% if item.price %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                                      {% else %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                                      {% endif %}
+                                                      <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+            
+                                                      <!-- <input type="hidden" name="item_tag" value="{{ item.type }}">
+                                                      <input type="hidden" name="tag_{{ item.id }}_{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                      <input type="hidden" name="title_{{ item.id }}" value="{{ item.title }}"> -->
+                                                      
+            
+                                                      <div class="form-row">
+            
+                                                        <!-- <div class="col-4  d-flex justify-content-end " >
+                                                          <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value">-</div>
+                                                        </div>
+            
+                                                        <div class="col-4  mx-0 px-0" >
+                                                          <input  type="number" 
+                                                                  id="count_{{ item.type }}{{ item.id }}" 
+                                                                  name="count_{{ item.title }}{{ item.type }}" 
+                                                                  placeholder="count{{ item.type }}{{ item.id }}" 
+                                                                  class="form-control mx-0 px-0"
+                                                                  value="0"
+                                                                  min="0"
+                                                                  max="9999"
+                                                                  autofocus/>
+                                                        </div>
+            
+                                                        <div class="col-4  " >
+                                                          <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value">+</div>
+                                                        </div> -->
+
+                                                        <!-- <div class="mx-auto">
+                                                          <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                                          <label class="btn" for="check_{{ item.title }}{{ item.type }}"><small>Request a Quote</small></label>
+                                                        </div> -->
+            
+                                                      </div>
+                                                      
+            
+                                                    </div>
+                                                  </div>
+            
+                                                </div>
+                                                
+                                              </div>
+                                            </div>
+                                            </label>
+
+                                          </div>
+                                          {% endfor %}
+                                          {% endif %}
+                                        </div>
+                                      </div>
+
+                                      <div class="tab-pane fade show " id="railway" role="tabpanel" aria-labelledby="railway-tab">
+                                        <div class="row my-3">
+                                          {% if railway %}
+                                          {% for item in railway %}
+                                          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6  mx-auto">
+                                            
+                                            <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                            <label class="btn" for="check_{{ item.title }}{{ item.type }}">
+                                            <div class="mx-0">
+                                              {% if item.cover %}
+                                              <img  class="card-img-top img-fluid img-responsive p-1" 
+                                                    src="{{ item.cover.url }}" 
+                                                     
+                                                    alt="image cap">
+                                              {% endif %}
+                                              <div class="card-body p-1">
+            
+                                                <div class="row">
+                                                  
+                                                  <div class="col-12  text-center">
+                                                    <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                                    {% if item.type == 'railway' %}
+                                                      <a href="{% url 'railway' %}" class="text-dark ml-3 text-capitalize">{{item.title}}</a>
+                                                    {% endif %}
+                                                  </div>
+            
+                                                  <!-- <div class="col-12 text-center">
+                                                    <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p>
+                                                    
+                                                  </div> -->
+            
+                                                  <div class="col-12">
+                                                    <div class="form-group">
+            
+                                                      <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                                      <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                                      <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                                      <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                                      {% if item.price %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                                      {% else %}
+                                                        <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                                      {% endif %}
+                                                      <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+            
+                                                      <!-- <input type="hidden" name="item_tag" value="{{ item.type }}">
+                                                      <input type="hidden" name="tag_{{ item.id }}_{{ item.type }}" value="{{ item.type }}">
+                                                      <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                      <input type="hidden" name="title_{{ item.id }}" value="{{ item.title }}"> -->
+                                                      
+            
+                                                      <div class="form-row">
+            
+                                                        <!-- <div class="col-4  d-flex justify-content-end " >
+                                                          <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value">-</div>
+                                                        </div>
+            
+                                                        <div class="col-4  mx-0 px-0" >
+                                                          <input  type="number" 
+                                                                  id="count_{{ item.type }}{{ item.id }}" 
+                                                                  name="count_{{ item.title }}{{ item.type }}" 
+                                                                  placeholder="count{{ item.type }}{{ item.id }}" 
+                                                                  class="form-control mx-0 px-0"
+                                                                  value="0"
+                                                                  min="0"
+                                                                  max="9999"
+                                                                  autofocus/>
+                                                        </div>
+            
+                                                        <div class="col-4  " >
+                                                          <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value">+</div>
+                                                        </div> -->
+
+                                                        <!-- <div class="mx-auto">
+                                                          <input  type="checkbox" 
+                                                                class="hidden" 
+                                                                name="check_{{ item.title }}{{ item.type }}" 
+                                                                id="check_{{ item.title }}{{ item.type }}"
+                                                                autocomplete="off">
+                                                          <label class="btn" for="check_{{ item.title }}{{ item.type }}"><small>Request a Quote</small></label>
+                                                        </div> -->
+            
+                                                      </div>
+                                                      
+            
+                                                    </div>
+                                                  </div>
+            
+                                                </div>
+                                                
+                                              </div>
+                                            </div>
+                                            </label>
+
+                                          </div>
+                                          {% endfor %}
+                                          {% endif %}
+                                        </div>
+                                      </div>
+
+
+    
+                                    </div>
+                                  </div>
+
+                                <!-- </div>
+
+                                
+
+                                
+
+
+                              </div> -->
+                            </div>
+                          </div>
+
+                          <div class="tab-pane fade show " id="tranings" role="tabpanel" aria-labelledby="tranings-tab">
+                            <div class="row my-3">
+                            {% if tranings %}
+                            {% for item in tranings %}
+                              <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 mx-auto">
+                                <div class="card mx-0">
+                                  {% if item.cover %}
+                                  <img  class="card-img-top img-fluid img-responsive p-1" 
+                                        src="{{ item.cover.url }}" 
+                                        style=" height: 150px; width: 100%;" 
+                                        alt="image cap" >
+                                  {% endif %}
+                                  <div class="card-body p-1">
+
+                                    <div class="row" >
+
+                                      <div class="col-12 text-center" >
+                                        <!-- <p class="card-text text-center text-capitalize">{{ item.title }}</p> -->
+                                        {% if item.type == 'training_list' %}
+                                          <a href="{% url 'trainings_detail' item.slug %}" class="text-dark  text-capitalize">{{item.title}}</a>
+                                        {% endif %}
+                                      </div>
+
+                                      <div class="col-12 text-center">
+                                        <!-- <p class="card-text text-dark text-capitalize" >{{ item.description|safe|truncatewords:5 }}</p> -->
+                                        <button class="btn btn-md z-depth-0 ml-0" disabled role="button" style="font-size: 28px;">
+                                          {% if item.price is 0 %}
+                                              Free
+                                          {% elif not item.price %}
+                                              Free
+                                          {% else %}
+                                               &euro;{{ item.price }}
+                                          {% endif %}
+                                      </button>
+                                      </div>
+
+                                      <div class="col-12">
+                                        <div class="form-group">
+                                          
+                                          <input type="hidden" name="title_type" value="{{ item.title }}{{ item.type }}">
+                                          <input type="hidden" name="item_id_{{ item.title }}{{ item.type }}" value="{{ item.id }}">
+                                          <input type="hidden" name="category_{{ item.title }}{{ item.type }}" value="{{ item.get_category }}">
+                                          <input type="hidden" name="class_{{ item.title }}{{ item.type }}" value="{{ item.get_class }}">
+                                          {% if item.price %}
+                                            <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="{{ item.price }}">
+                                          {% else %}
+                                            <input type="hidden" name="price_{{ item.title }}{{ item.type }}" value="0">
+                                          {% endif %}
+                                          <input type="hidden" name="tag_{{ item.title }}{{ item.type }}" value="{{ item.type }}">
+                                          <input type="hidden" name="title_{{ item.title }}{{ item.type }}" value="{{ item.title }}">
+
+                                          
+                                          <div class="form-row">
+
+                                            <div class="col-4  d-flex justify-content-end ml-auto" >
+                                              <div class="value-button decrease minus_button ml-1" id="decrease__{{ item.type }}{{ item.id }}" value="Decrease Value" >-</div>
+                                            </div>
+
+                                            <div class="col-4  mx-0 px-0" >
+                                              <input  type="number" 
+                                                      id="count_{{ item.type }}{{ item.id }}" 
+                                                      name="count_{{ item.title }}{{ item.type }}" 
+                                                      placeholder="count{{ item.type }}{{ item.id }}" 
+                                                      class="form-control mx-0 px-0"
+                                                      value="0"
+                                                      min="0"
+                                                      max="9999"
+                                                      style="font-size: 20px; width: 100% !important;"
+                                                      autofocus/>
+                                            </div>
+
+                                            <div class="col-4 mr-auto " >
+                                              <div class="value-button increase plus_button" id="increase__{{ item.type }}{{ item.id }}" value="Increase Value" >+</div>
+                                            </div>
+
+                                          </div>
+
+                                          <!-- <div class="text-center">
+                                            <label  for="count_{{ item.title }}{{ item.type }}" class="control-label  my-auto">
+                                              <img  class="my-auto py-auto px-auto"
+                                                    src="{% static '/fonts/employee-group.png' %}" 
+                                                    style=" height: 25px;" 
+                                                    alt="*">
+                                            </label>  <input  class=""
+                                                      type="number" 
+                                                      id="count" 
+                                                      name="count_{{ item.title }}{{ item.type }}" 
+                                                      placeholder="count" 
+                                                      class="form-control"
+                                                      value="0"
+                                                      min="0"
+                                                      max="9999"
+                                                      autofocus/> 
+                                          </div>  -->
+                                          
+
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                    
+                                  </div>
+                                </div>
+                              </div>
+                            {% endfor %}
+                            {% endif %}
+                            </div>
+                          </div>
+
+                          
+                        </div>
+
+                        
+                      <!-- </div>
+                    </div>
+
+                  </div> -->
+                </div>
+
+                <!-- <div class="modal-footer">
+                  <button type="button" class="btn btn-dark text-light" data-dismiss="modal">Close</button> 
+                  <button type="submit" name="add_to_wishlist_button" id="add_to_wishlist_button" class="btn btn-dark">Add to Quote</button>
+                </div>-->
+
+              </form>
+
+            </div>
+          </div>
+        </div>
+        
+        
+
+        {% if wishlistitem_with_price %}
+        <div class="col-12">  <!--  style="background: linear-gradient(45deg, #3f78f3, #55f041a6);" -->
+          <form method="post" id="delete_from_wishlist" data-url="{% url 'my_products' %}">
+            {% csrf_token %}
+            <div class="row my-3">
+
+              <div class="col-12">
+                <h3>Basket:</h3>
+              </div>
+              
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+                <div class="table-responsive-xl">
+                  <table class="table table-sm table-hover">
+                    
+                    <thead>
+                      <tr>
+                        <th class="text-center font-weight-bold " scope="col"></th>
+                        <th class="text-left font-weight-bold " scope="col">Item</th>
+                        <th class="text-center font-weight-bold" scope="col">Category</th>
+                        <th class="text-center font-weight-bold" scope="col">Qty</th>
+                        <th class="text-center font-weight-bold" scope="col">Add/Remove</th>
+                        <th class="text-center font-weight-bold" scope="col">Price</th>
+                        <!-- <th class="text-center" scope="col">When is Required</th> -->
+                        
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      
+                      {% for item in wishlistitem_with_price %}
+                      <tr>
+                        <th class="text-center " scope="row">{{ forloop.counter }}</th>
+                        <td class="text-left " >
+                          {% if item.category_name == 'Support' %}
+                            {% if item.tag == 'training_list' %}
+                              <a href="{% url 'traininglist' %}" class=" text-dark text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% endif %}
+                          {% else %}      
+                            {{ item.title }}
+                          {% endif %}
+                          
+                        </td>
+                        <td class="text-center" >{{ item.class_name }}</td>
+                        <td class="text-center">
+
+                          {% if not item.paid %}
+                          <input type="hidden" name="unique_id" value="{{ item.tag }}{{ item.id }}">
+                          <input type="hidden" name="item_id_{{ item.tag }}{{ item.id }}" value="{{ item.id }}">
+                          <input type="hidden" name="item_title_{{ item.tag }}{{ item.id }}" value="{{ item.title }}">
+                          <input type="hidden" name="item_tag_{{ item.tag }}{{ item.id }}" value="{{ item.tag }}">
+                          <input type="hidden" name="object_id_{{ item.tag }}{{ item.id }}" value="{{ item.object_id }}">
+
+                            <input  type="number" 
+                                    id="item_count_{{ item.tag }}{{ item.id }}" 
+                                    name="item_count_{{ item.tag }}{{ item.id }}" 
+                                    
+                                    class="form-control mx-0 px-0"
+                                    
+                                    autofocus
+                                    {% if item.category_name == "Services" %}
+                                      value="1" 
+                                      readonly 
+                                    {% else %}
+                                        value="{{ item.count }}"
+                                    {% endif %}
+                                    
+                                    />
+                          {% else %}
+                            {{ item.count }}
+                          {% endif %}
+                                  
+                          
+                          
+                        </td>
+                        <td class="text-center"> <!-- class="close" aria-label="Close" -->
+                          <button type="submit" class="btn btn-light" aria-label="sync" name="delete_from_wishlist_button" id="delete_from_wishlist_button">
+                            <span class="fas fa-sync-alt fa-md" aria-hidden="true"></span>
+                          </button>
+                        </td>
+                        <td class="text-center" id="price_{{ item.title }}{{ item.type }}">
+                          
+                            
+
+                              {% if not item.paid %}
+                                <abbr title = "Click for pay">
+                                  <a  
+                                      class=" btn btn-gray  text-light ml-0" 
+                                        href="#"
+                                        style="background-color: #6c757d;"
+                                      
+                                      >
+                                      {% if item.category_name == 'Support' %}
+                                        {% if item.price is 0 %}
+                                            Free
+                                        {% elif not item.price %}
+                                            Free
+                                        {% else %}
+                                            &euro;{{ item.price }}
+                                        {% endif %}
+                                      {% else %}
+                                      Ask a Quote 
+                                      {% endif %}
+                                  </a>
+                                </abbr>
+                              {% else %} 
+                                <button 
+                                          class=" btn btn-gray text-capitalize  ml-0" 
+                                          style="background-color: #6fdb98; color: #000000;"
+                                          disabled>
+                                  
+                                      Paid
+                                </button>
+                              {% endif %}
+                            
+                        
+                        </td>
+                        <!-- <td class="text-center" >
+                          
+                          <abbr title = "Enter date in yyyy-mm-dd format">
+                          <input  type = 'date'
+                                  name='start_date_{{ item.tag }}{{ item.id }}' 
+                                  {% if item.when_is_required_date %}
+                                    value='{{ item.when_is_required_date|date:"Y-m-d" }}' 
+                                  {% else %}
+                                    value="yyyy-mm-dd"
+                                  {% endif %}
+                                  required 
+                                  placeholder="yyyy-mm-dd"
+                                  pattern="\d{4}-\d{2}-\d{2}">
+
+                          </abbr>
+                        </td> -->
+                        
+
+                      </tr>
+                      {% endfor %}
+
+                    </tbody>
+
+                  </table>
+                </div>
+                
+
+              </div>
+              
+            </div>
+        </form>
+        </div>
+        {% endif %}
+
+        {% if wishlistitem_without_price %}
+        <div class="col-12">  <!--  style="background: linear-gradient(45deg, #3f78f3, #55f041a6);" -->
+          
+            <div class="row my-3">
+
+              <div class="col-12">
+                <h3>Quote List:</h3>
+              </div>
+              
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+                <div class="table-responsive-xl">
+                  <table class="table table-sm table-hover">
+                    
+                    <thead>
+                      <tr>
+                        <th class="text-center font-weight-bold" scope="col"></th>
+                        <th class="text-left font-weight-bold" scope="col">Item</th>
+                        <th class="text-left font-weight-bold" scope="col">Category</th>
+                        <th class="text-center font-weight-bold" scope="col">Qty</th>
+                        <th class="text-center font-weight-bold" scope="col">Add/Remove</th>
+                        <th class="text-center font-weight-bold" scope="col">Quote Status</th>
+                        <th class="text-center font-weight-bold" scope="col">Submission Date</th>
+                        
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      
+                      {% for item in wishlistitem_without_price %}
+                      <tr>
+                        <th class="text-left" scope="row">{{ forloop.counter }}</th>
+                        <td class="text-left " >
+                          {% if item.category_name == 'Services' %}
+                            {% if item.tag == 'automotive' %}
+                                <a href="{% url 'automotive' %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% elif item.tag == 'avionics' %}
+                                <a href="{% url 'avionics' %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% elif item.tag == 'digital_transformation' %}
+                                <a href="{% url 'digital_transformation' %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% elif item.tag == 'healthcare' %}
+                                <a href="{% url 'healthcare' %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% elif item.tag == 'precise_farming' %}
+                                <a href="{% url 'precise_farming' %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% elif item.tag == 'railway' %}
+                                <a href="{% url 'railway' %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% endif %}   
+                          {% elif item.category_name == 'Support' %}
+                            {% if item.tag == 'training_list' %}
+                              <a href="{% url 'traininglist' %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% endif %}
+                          {% elif item.category_name == 'Products' %}
+                            {% if item.tag == 'water_quality_sensor' %}
+                              <a href="{% url 'water_sensor_item' item.title %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% elif item.tag == 'smartflow' %}
+                              <a href="{% url 'valve' item.title %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                            {% elif item.tag == 'accessories' %}
+                              <a href="{% url 'accessories'  %}" class=" text-dark  text-capitalize" style=" text-decoration: none !important;">{{item.title}}</a>
+                              
+                            {% endif %}
+                          {% else %}      
+                            {{ item.title }}
+                          {% endif %}
+                          
+                        </td>
+                        <td class="text-left" >{{ item.category_name }} | {{ item.class_name }}</td>
+
+                        {% if not item.submitted %}
+
+                          {% if item.category_name == 'Services' %}
+                            <form method="post" id="delete_service_from_wishlist" data-url="{% url 'my_products' %}">
+                              {% csrf_token %}
+                              <td class="text-left">
+
+                                <input type="hidden" name="unique_id" value="{{ item.tag }}{{ item.id }}">
+                                <input type="hidden" name="item_id_{{ item.tag }}{{ item.id }}" value="{{ item.id }}">
+                                <input type="hidden" name="item_title_{{ item.tag }}{{ item.id }}" value="{{ item.title }}">
+                                <input type="hidden" name="item_tag_{{ item.tag }}{{ item.id }}" value="{{ item.tag }}">
+
+                                  <input  type="number" 
+                                          id="item_count_{{ item.tag }}{{ item.id }}" 
+                                          name="item_count_{{ item.tag }}{{ item.id }}" 
+                                          class="form-control mx-0 px-0"
+                                          autofocus
+                                          value="1" 
+                                          readonly
+                                          />
+                                
+                                        
+                                
+                                
+                              </td>
+                              
+                              <td class="text-center"> 
+                                <button type="submit" class="btn btn-light  confirm-delete" aria-label="sync" name="delete_service_from_wishlist_button" id="delete_service_from_wishlist_button">
+                                  <span class="fas fa-trash-alt fa-md" aria-hidden="true"></span>
+                                  <!-- fas fa-trash-alt 
+                                  fa fa-trash
+                                  far fa-trash-alt  -->
+                                </button>
+                              </td>
+
+                              <td class="text-center" id="price_{{ item.title }}{{ item.type }}">
+                                <abbr title = "Click for submitting a quote">
+                                  <a  
+                                      class=" btn btn-gray text-capitalize text-light ml-0" 
+                                        href="{% url 'submit_quote' %}"
+                                        style="background-color: #6c757d;"
+                                      
+                                      >
+                                      Ask a Quote 
+                                  </a>
+                                </abbr>
+                              </td>
+                            </form>
+                          {% else %}
+                            <form method="post" id="delete_from_wishlist" data-url="{% url 'my_products' %}">
+                              {% csrf_token %}
+                              <td class="text-center">
+
+                                <input type="hidden" name="unique_id" value="{{ item.tag }}{{ item.id }}">
+                                <input type="hidden" name="item_id_{{ item.tag }}{{ item.id }}" value="{{ item.id }}">
+                                <input type="hidden" name="item_title_{{ item.tag }}{{ item.id }}" value="{{ item.title }}">
+                                <input type="hidden" name="item_tag_{{ item.tag }}{{ item.id }}" value="{{ item.tag }}">
+
+                                  <input  type="number" 
+                                          id="item_count_{{ item.tag }}{{ item.id }}" 
+                                          name="item_count_{{ item.tag }}{{ item.id }}" 
+                                          class="form-control mx-0 px-0"
+                                          autofocus
+                                          value="{{ item.count }}"
+                                          />
+                                
+                                        
+                                
+                                
+                              </td>
+                              
+                              <td class="text-center">
+                                <button type="submit" class="btn btn-light" aria-label="sync" name="delete_from_wishlist_button" id="delete_from_wishlist_button">
+                                  <span class="fas fa-sync-alt fa-md" aria-hidden="true"></span>
+                                </button>
+                              </td>
+
+                              <td class="text-center" id="price_{{ item.title }}{{ item.type }}">
+                                
+                                    {% if not item.submitted %}
+                                      <abbr title = "Click for submitting a quote">
+                                        <a  
+                                            class=" btn btn-gray text-capitalize text-light ml-0" 
+                                              href="{% url 'submit_quote' %}"
+                                              style="background-color: #6c757d;"
+                                            
+                                            >
+                                            {% if item.category_name == 'Support' %}
+                                              {% if item.price is 0 %}
+                                                  Free
+                                              {% elif not item.price %}
+                                                  Free
+                                              {% else %}
+                                                  &euro;{{ item.price }}
+                                              {% endif %}
+                                            {% else %}
+                                            Ask a Quote 
+                                            {% endif %}
+                                        </a>
+                                      </abbr>
+                                    {% else %} 
+                                    <!-- 6fdb98 -->
+                                      <button 
+                                                class=" btn btn-gray text-capitalize  ml-0" 
+                                                style="background-color: #6c757d; color: #000000;"
+                                                disabled>
+                                        
+                                            Submitted
+                                      </button>
+                                    {% endif %}
+                                  
+                              
+                              </td>
+                            </form>                            
+                          {% endif %}
+                          
+                        {% else %}
+                          <td class="text-center">
+
+                            <input type="hidden" name="unique_id" value="{{ item.tag }}{{ item.id }}">
+                            <input type="hidden" name="item_id_{{ item.tag }}{{ item.id }}" value="{{ item.id }}">
+                            <input type="hidden" name="item_title_{{ item.tag }}{{ item.id }}" value="{{ item.title }}">
+                            <input type="hidden" name="item_tag_{{ item.tag }}{{ item.id }}" value="{{ item.tag }}">
+
+                              <input  type="number" 
+                                      id="item_count_{{ item.tag }}{{ item.id }}" 
+                                      name="item_count_{{ item.tag }}{{ item.id }}" 
+                                      class="form-control mx-0 px-0"
+                                      autofocus
+                                      readonly 
+                                      value="{{ item.count }}"
+                                      />
+                            
+                          </td>
+
+                          <td class="text-center">
+                            {% if item.category_name == 'Services' %}
+                              <button type="submit" class="btn btn-light" disabled aria-label="sync" name="delete_service_from_wishlist_button" id="delete_service_from_wishlist_button">
+                                <span class="far fa-trash-alt fa-md" aria-hidden="true"></span>
+                                <!-- fas fa-trash-alt 
+                                fa fa-trash
+                                far fa-trash-alt  -->
+                              </button>
+                            {% else %}
+                              <button type="submit" class="btn btn-light" disabled aria-label="sync" name="delete_from_wishlist_button" id="delete_from_wishlist_button">
+                                <span class="fas fa-sync-alt fa-md" aria-hidden="true"></span>
+                              </button>
+                            {% endif %}
+                          </td>
+
+                          <td class="text-center" id="price_{{ item.title }}{{ item.type }}">
+                            
+                                
+                                  <abbr title = "Click to check the quote">
+                                  <a 
+                                            class=" btn btn-gray text-capitalize  ml-0" 
+                                            {% if item.quoteList.status == 'Ready' %}
+                                              style="background-color: #6fdb98; color: #000000;"
+                                            {% elif item.quoteList.status == 'Processing' %}
+                                              style="background-color: #09a5ee; color: #000000;"
+                                            {% elif item.quoteList.status == 'Submitted' %}
+                                              style="background-color: #6c757d; color: #000000;"
+                                            {% else %}
+                                              style="background-color: #f03d3d; color: #000000;"
+                                            {% endif %}
+                                            href="{% url 'quote_history' item.quoteList.id %}"
+                                            disabled>
+                                    
+                                        {{ item.quoteList.status }}
+                                  </a>
+                                  </abbr>
+                                
+                              
+                          
+                          </td>
+                        {% endif %}
+
+                        <td class="text-center" >
+                          {% if item.submitted %}
+                          {{ item.quoteList.creation_date|date:"d/m/Y" }}
+                          {% endif %}
+                        </td>
+                        
+
+                      </tr>
+                      {% endfor %}
+
+                    </tbody>
+
+                  </table>
+                </div>
+                
+
+              </div>
+              
+            </div>
+          </form>
+        </div>
+        {% endif %}
+
+        <!-- Pagination -->
+        <div class="col-md-12"> 
+          {% if wishlistitem.has_other_pages %}
+
+            <ul class="pagination">
+              {% if wishlistitem.has_previous %}
+                <li class="page-item">
+                  <a href="?page={{wishlistitem.previous_page_number}}" class="page-link">&laquo;</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">&laquo;</a>
+                </li>
+              {% endif %}
+              {% for i in wishlistitem.paginator.page_range %}
+                {% if wishlistitem.number == i %}
+                  <li class="page-item active">
+                    <a class="page-link">{{i}}</a>
+                  </li>
+                {% else %}
+                  <li class="page-item">
+                    <a href="?page={{i}}" class="page-link">{{i}}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              {% if wishlistitem.has_next %}
+                <li class="page-item">
+                  <a href="?page={{wishlistitem.next_page_number}}" class="page-link">&raquo;</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled">
+                  <a class="page-link">&raquo;</a>
+                </li>
+              {% endif %}
+            </ul>
+  
+          {% endif %} 
+        </div>
+        <!-- Pagination -->
+
+      </div>
+
+    </div>
+      
+  </div>
+</div>
+</div>
+
+
+<script>
+      function checkFields(form) {
+        var checks_radios = form.find(':checkbox, :radio'),
+            inputs = form.find(':input').not(checks_radios).not('[type="submit"],[type="button"],[type="reset"],[type="hidden"]'); 
+        
+        var checked = checks_radios.filter(':checked');
+        var filled = inputs.filter(function(){
+          console.log('filled: ',filled)
+          return $.trim($(this).val()).length > 0;
+
+        });
+        
+        if(checked.length + filled.length === 0) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    $(function(){
+        $('#add_to_wishlist').on('submit',function(e){
+            // e.preventDefault();
+            var oneFilled = checkFields($(this));
+            if(oneFilled) {
+                // alert('At least ONE field filled!');
+                return true;
+            } else {
+                alert('NO FIELDS FILLED OUT!');
+                return false;
+            }
+        });
+    });
+</script>
+
+<script>
+  
+
+
+  $(".minus_button").click(function(){
+    
+    // alert(this.id)
+
+    item_id = this.id.split('__')[1];
+    // console.log('item id in minus: ', item_id);
+    // console.log('before value: ', document.getElementById('count_' + item_id ).value);
+
+    var value = parseInt(document.getElementById('count_' + item_id ).value, 10);
+    value = isNaN(value) ? 0 : value;
+    value < 1 ? value = 1 : '';
+    value--;
+    document.getElementById('count_' + item_id ).value = value;
+
+    // console.log('after value: ', document.getElementById('count_' + item_id ).value);
+
+  });
+  
+  $(".plus_button").click(function(){
+    // alert(this.id)
+
+    item_id = this.id.split('__')[1];
+    // console.log('item id in plus: ', item_id);
+
+    // console.log('before value: ', document.getElementById('count_' + item_id ).value);
+
+    var value = parseInt(document.getElementById('count_'+ item_id ).value, 10);
+    value = isNaN(value) ? 0 : value;
+    value++;
+    document.getElementById('count_' + item_id ).value = value;
+
+    // console.log('after value: ', document.getElementById('count_' + item_id ).value);
+
+
+  });
+
+
+  
+
+</script>
+
+<script>
+  $(document).on('click', '.confirm-delete', function(){
+    return confirm('Are you sure you want to delete this?');
+  })
+</script>
+{% endblock %}

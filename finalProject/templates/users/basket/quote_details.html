@@ -1,0 +1,413 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} | Quote Details  {% endblock %}
+
+{% block content %}
+
+<style>
+  th {
+    background-color:#d3d3d3;
+    width: 100%;
+  }
+</style>
+
+
+<div class="container mb-3">
+  <!-- Breadcrumb -->
+<div class="container pt-3">
+  <nav aria-label="breadcrumb">
+              <ol class="breadcrumb" style="background-color: #FFF;">
+
+              <li class="breadcrumb-item">
+                  <a href="{% url 'index' %}" class="text-dark">
+                  <i class="fas fa-home"></i> Home</a>
+              </li>
+              
+              <li class="breadcrumb-item">
+                  <a href="{% url 'dashboard' %}" class="text-dark">
+                    Dashboard
+                  </a>
+              </li>
+              
+              <li class="breadcrumb-item">
+                <a href="{% url 'received_quotes' %}" class="text-dark">
+                    Received Quotes 
+                </a>
+              </li>
+
+              {% if user.is_authenticated %}
+                <li class="breadcrumb-item ">Quote List</li>
+              {% endif %}
+
+              {% if user.is_authenticated %}
+                <li class="breadcrumb-item active"> Quote Details</li>
+              {% endif %}
+              </ol>
+              
+  </nav>
+</div>
+<!-- Breadcrumb -->
+
+
+<!-- dashboard content -->
+<div class="container z-depth-1 pb-3">
+  <div class="row">
+
+      <!-- sidebar -->
+      <div class="col-md-4 col-xl-4 offset-xl-0 mt-3">
+        
+        {% include 'partials/_dashboard_base.html' %}
+          
+      </div>
+
+      <!-- content -->
+      <div class="col-md-8">
+
+        <h1> Quote Details </h1>
+        <hr>
+
+        <div class="row">
+
+          <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+            {% if quote %}
+              
+
+                <!-- Card quote -->
+                <div class="card  mb-3 text-dark" >
+
+                    <div class="card-header">
+                      <div class="row d-flex">
+                        <div class="col-4 d-flex justify-content-start">{% if quote.owner.title %}{{quote.owner.title}}{% endif %} {{ quote.owner.get_full_name}}</div>
+                        <div class="col-4 d-flex justify-content-center">{{ quote.owner.company}}</div>
+                        <div class="col-4 d-flex justify-content-end">{{ quote.creation_date|date:"d/m/Y-G:i"}}</div>
+
+                      </div>
+                    </div>
+
+                    <div class="card-body"  >
+                      <p style="font-family: sans-serif, 'Times New Roman', Times, serif; font-size: 16px;">{{ quote.message|safe }}</p>
+                      {% if quote.attached_file %}
+                      <div class="">
+                          <a role="button" 
+                              href="{{ quote.attached_file.url }}"
+                              download="{{ quote.attached_file.url }}"
+                              class="btn btn-light text-dark ml-0">
+                              {{ quote.get_file_name }}
+                          </a>
+                      </div>
+                      {% endif %}
+
+                      {% if wishlistitem %}
+                        
+                        <div class="table-responsive-xl">
+                        <table class="table table-sm table-hover mb-0">
+                            
+                            <thead>
+                            <tr>
+                                <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col"></th>
+                                <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Item</th>
+                                <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Category</th>
+                                <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Qty</th>
+                                <th class="text-left bg-white font-weight-bold" style="width: auto;" scope="col">Required Date</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for item in wishlistitem %}
+                            <tr>
+                                <th class="text-center bg-white" style="width: auto;" >{{ forloop.counter }}</th>
+                                <td class="text-left" >
+                                    {{ item.title }}
+                                </td>
+                                <td class="text-left" >{{ item.category_name }} | {{ item.class_name }}</td>
+                                <td class="text-left">
+                                    <p>
+                                        {{ item.count }}
+                                    </p>
+                                </td>
+                                
+                                <td class="text-left" >{{ item.when_is_required_date|date:"d-m-Y" }}</td>
+                                
+
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+
+                        </table>
+                        </div>
+                                
+                    {% else %}
+                                <p>
+                                    No records found.
+                                </p>
+                    {% endif %}
+
+
+                    </div>
+
+                    <div class="card-footer" style="border-top: none;">
+                    </div>
+
+                </div>
+
+                <!-- Card converstation -->
+                {% if replies %}
+                {% for item in replies %}
+                <div class="card  mb-3 text-dark" >
+
+                    <div class="card-header">
+                      <div class="row d-flex">
+                        <div class="col-4 d-flex justify-content-start">{% if item.owner.title %}{{item.owner.title}}{% endif %} {{ item.owner.get_full_name}}</div>
+                        <div class="col-4 d-flex justify-content-center">{{ item.owner.company}}</div>
+                        <div class="col-4 d-flex justify-content-end">{{ item.creation_date|date:"d/m/Y-G:i"}}</div>
+
+                      </div>
+                    </div>
+
+                    <div class="card-body"  >
+                      <p style="font-family: sans-serif, 'Times New Roman', Times, serif; font-size: 16px;">{{ item.message|safe }}</p>
+                      {% if item.attached_file %}
+                      <div class="">
+                          <a role="button" 
+                              href="{{ item.attached_file.url }}"
+                              download="{{ item.attached_file.url }}"
+                              class="btn btn-light text-dark ml-0">
+                              {{ item.get_file_name }}
+                          </a>
+                      </div>
+                      {% endif %}
+
+                    </div>
+
+                    <div class="card-footer" style="border-top: none;">
+                    </div>
+
+                </div>
+                {% endfor %}
+                {% endif %}
+
+
+                <!-- Card answer -->
+                <div class="card  mb-4 text-dark" id="reply" display="none" >
+
+                    <div class="card-body"  >
+                        <!-- url 'answer_message' quote.message_id -->
+                        <form name="messageform" id="messageform" action="{% url 'quote_details' quote.id %}" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                
+                            <!-- <input type="hidden" name="user_id" value="{{ user.user_id }}">  -->
+                            <!-- <input type="hidden" name="id" value="{{ user.id }}"> -->
+                            <!-- <input type="hidden" name="receiver_id" value="{{ quote.owner.user_id }}">  -->
+                            <input type="hidden" name="owner_id" value="{{ user.id }}">
+                            <input type="hidden" name="in_converstation" value="True">
+
+
+                            
+                           
+                            {% if general %}
+                                {% for key, value in general.items %}
+                                    {% if key == 'Quote' %}
+                                    <input type="hidden" name="subject" value="{{ key }}">
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                                                        
+                            
+                            <div class="form-row">
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                    <div class="form-group">
+                
+                                        <div class="row">
+                                            
+                                            <!-- <input type="hidden" name="send_email" value="True">
+                                            <input type="hidden" name="send_email_to" value="{{ quote.owner.email }}">
+                                            {% if quote.owner.title %}
+                                                <input type="hidden" name="receiver_title" value="{{ quote.owner.title }}">
+                                            {% endif %}
+                                            <input type="hidden" name="receiver_name" value="{{ quote.owner.last_name }}"> -->
+                                            <input type="hidden" name="converstation_id" value="{{ quote.id }}">
+
+
+                                            <div class="col-1 mr-auto">
+                                                <label for="message" class="col-form-label">Message:</label>
+                                            </div>
+                
+                                            <div class="col-10 ml-auto">
+                                                <textarea   name="message" 
+                                                            id="message" 
+                                                            class="form-control" 
+                                                            maxlength="4096" 
+                                                            onkeyup="textCounter(this,'counter',4096);" 
+                                                            required 
+                                                            style="height: 200px; " ></textarea>
+                
+                                                <input  
+                                                        disabled  
+                                                        maxlength="4" 
+                                                        size="4" 
+                                                        value="4096" 
+                                                        id="counter" 
+                                                        style="background-color: rgb(255, 255, 255); border: none; right: 0px;" ></input>
+                                            </div>
+                                            
+                
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row" >
+
+                                <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                    <div class="form-group">
+                
+                                        <div class="row">
+                
+                                            <div class="col-2 mr-auto" >
+                                                <label for="attached_file" class="col-form-label">Attach an Invoice:</label>
+                                            </div>
+                
+                                            <div class="col-10  ml-auto " >
+                                                <input type="file" id="attached_file" name="attached_file">
+                                            </div>
+                
+                                        </div>
+                
+                
+                                    </div>
+                                </div>
+                            </div>
+                            
+                
+                            
+                
+                            <!-- Submit button -->
+                            <div class="form-row">
+                                <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
+                                    <div class="form-group">
+                                    <button class="btn  text-capitalize font-weight-bold  text-light btn-block" 
+                                            type="submit"
+                                            value="Send" 
+                                            style="background: #b5b5b5;">
+                                            Send
+                                    </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                
+                        </form>
+                    </div>
+                    
+                </div>
+
+                <div class="row" id="reply_button">
+                    <div class="col-12">
+                        <button class=" btn btn-gray  text-light ml-0" 
+			                    style="background-color: #6c757d;"
+                                type="button"
+                                onclick="showStuff('answer1', 'text1', this); return false;">Reply</button>
+                    </div>
+                </div>
+
+                
+                  
+             
+
+              
+
+            {% else %}
+              <div class="col-lg-12 col-md-6 col-sm-12 col-xs-12">  
+                  
+                  <div class="col-xs-6 col-sm-6 col-md-12">
+                    <div class="contenier">
+                      <h5>List of messages</h5>
+                      <p>no records found.</p>
+                    </div>
+                  </div>     
+
+              </div> 
+            {% endif%} 
+          </div>
+          
+        </div>
+          
+
+      </div>
+
+
+  </div>
+</div>
+<!-- dashboard content -->
+
+</div>
+
+<script>
+    document.getElementById("reply").style.display = 'none';
+    function showStuff() {
+        if( document.getElementById("reply").style.display == 'none'){
+            document.getElementById("reply").style.display = 'block';
+            document.getElementById("reply_button").style.display = 'none';
+            //document.getElementById("reply_button").innerHTML.text = 'Close';
+        }
+        //else{
+        //    document.getElementById("reply").style.display = 'none';
+            //document.getElementById("reply_button").innerHTML.text = 'Reply';
+        //}
+        
+    }
+</script>
+
+<script>
+  function textCounter(field,field2,maxlimit)
+  {
+   var countfield = document.getElementById(field2);
+   if ( field.value.length > maxlimit ) {
+    field.value = field.value.substring( 0, maxlimit );
+    return false;
+   } else {
+    countfield.value = maxlimit - field.value.length;
+   }
+  }
+</script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script src="//cdn.ckeditor.com/4.15.0/full/ckeditor.js"></script>
+<script>
+  CKEDITOR.replace( 'message' );
+  CKEDITOR.config.allowedContent = true;
+  CKEDITOR.config.removeFormatAttributes = '';
+  CKEDITOR.config.toolbarGroups = [
+		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+		{ name: 'forms', groups: [ 'forms' ] },
+		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+		{ name: 'links', groups: [ 'links' ] },
+		{ name: 'insert', groups: [ 'insert' ] },
+		{ name: 'styles', groups: [ 'styles' ] },
+		{ name: 'colors', groups: [ 'colors' ] },
+		{ name: 'tools', groups: [ 'tools' ] },
+		{ name: 'others', groups: [ 'others' ] },
+		{ name: 'about', groups: [ 'about' ] }
+	];
+    CKEDITOR.config.removeButtons = 'Source,Save,NewPage,ExportPdf,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,CopyFormatting,RemoveFormat,Italic,Underline,Strike,Subscript,Superscript,Textarea,Select,Button,ImageButton,HiddenField,Blockquote,CreateDiv,Outdent,Indent,JustifyLeft,JustifyCenter,JustifyRight,JustifyBlock,Language,Link,Image,Flash,Unlink,Anchor,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,FontSize,Font,Format,Styles,TextColor,ShowBlocks,Maximize,About,BGColor';
+</script>
+<script type="text/javascript">
+
+  $('#messageform').submit(function() 
+  {
+      if (jQuery("#cke_1_contents iframe").contents().find("body").text() === "") {
+          alert('Please enter your message.');
+      return false;
+      }
+  });
+  
+</script>
+{% endblock %}

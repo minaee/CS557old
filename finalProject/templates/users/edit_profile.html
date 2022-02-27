@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %} | User Dashboard {% endblock %}
+
+{% block content %}
+
+
+<div class="container mb-3">
+    <!-- Breadcrumb -->
+<div class="container pt-3">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="background-color: #FFF;">
+  
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}" class="text-dark">
+                    <i class="fas fa-home"></i> Home</a>
+                </li>
+                
+                <li class="breadcrumb-item">
+                    <a href="{% url 'dashboard' %}" class="text-dark">
+                    <i class="fas fa-home"></i> Dashboard</a>
+                </li>
+
+                {% if user.is_authenticated %}
+                  <li class="breadcrumb-item active">Edit Profile</li>
+                {% endif %}
+                </ol>
+                
+    </nav>
+</div>
+<!-- Breadcrumb -->
+
+
+<!-- dashboard content -->
+<div class="container z-depth-1 pb-3">
+    <div class="row">
+  
+        <!-- sidebar -->
+        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 offset-xl-0 mt-3">
+          
+          {% include 'partials/_dashboard_base.html' %}
+            
+        </div>
+  
+        <!-- content -->
+        <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8" >
+
+             <!-- Alerts -->
+              {% include 'partials/_alerts.html' %}
+              <!-- Aletrs -->
+
+            <!-- Header -->
+            <div class="my-3 " >
+                <h3>
+                My Data</h3>
+            </div>
+            <!-- Header -->
+
+            <!-- Body -->
+            <div >
+
+                <form action="{% url 'edit_profile' %}" method="POST">
+                    {% csrf_token %}
+
+                    {% if user.is_authenticated %}
+                    <input type="hidden" name="user_id" value="{{ user.id }}">
+                    <!-- <h1> {{ user.email }} </h1> -->
+                    <!-- {{user.first_name}} -->
+                    
+                    {% else %}
+                    <input type="hidden" name="user_id" value="0">
+                    {% endif %}
+                    
+                    <div class="form-row" >
+
+                        <!-- Title Contact -->
+                        <div class=" col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                            <div class="form-group">
+                                <label for="title" class="control-label">Title</label>
+                                <select class="form-control dropdown-btn btn-light dropdown-toggle menu"
+                                        type="button"
+                                        name="title"
+                                        aria-haspopup="true" 
+                                        aria-expanded="false"
+                                        autofocus>
+                                        <!-- required> -->
+                                    {% if user.is_authenticated and user.title %} 
+                                        
+                                        <option selected="selected" disabled class="dropdown-item" value="{{user.title}}">{{user.title}}</option>
+
+                                        <option class="dropdown-item" value="Prof.">Prof.</option>
+                                        <option class="dropdown-item" value="Dr.">Dr.</option>
+                                        <option class="dropdown-item" value="Mr.">Mr.</option>
+                                        <option class="dropdown-item" value="Mrs.">Mrs.</option>
+                                        
+                                    {% else %}
+                                        <option selected="selected" disabled>Choose</option>
+                                        <option class="dropdown-item" value="Prof.">Prof.</option>
+                                        <option class="dropdown-item" value="Dr.">Dr.</option>
+                                        <option class="dropdown-item" value="Mr.">Mr.</option>
+                                        <option class="dropdown-item" value="Mrs.">Mrs.</option>
+                                    {% endif %}
+                                    
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- first name -->
+                        <div class=" col-sm-12 col-md-3 col-lg-3 col-xl-3 mr-auto">
+                            <div class="form-group">
+                            <label for="firstname" class="column-sm-3 control-label">First name*</label>
+                            <input  type="text" 
+                                    id="firstname" 
+                                    name="firstname" 
+                                    placeholder="First Name" 
+                                    class="form-control" 
+                                    {% if user.is_authenticated  %} 
+                                        value="{{user.first_name}} "
+                                    {% endif %}
+                                    autofocus required/> 
+                            </div>
+                        </div>
+
+                        <!-- last name -->
+                        <div class=" col-sm-12 col-md-3 col-lg-3 col-xl-3 mx-auto">
+                            <div class="form-group">
+                            <label for="lastname" class="column-sm-3 control-label">Last name*</label>
+                            <input  type="text" 
+                                    id="lastname" 
+                                    name="lastname" 
+                                    placeholder="Last Name" 
+                                    class="form-control" 
+                                    {% if user.is_authenticated  %} 
+                                        value="{{user.last_name}} "
+                                    {% endif %}
+                                    autofocus required/> 
+                            </div>
+                        </div>
+                    
+                        <!-- company -->
+                        <div class=" col-sm-12 col-md-3 col-lg-3 col-xl-3 ml-auto">
+                            <div class="form-group">
+                            <label for="company" class="control-label">Company Name</label>
+                            <input  type="text" 
+                                    id="company" 
+                                    name="company" 
+                                    placeholder="Company Name" 
+                                    class="form-control" 
+                                    {% if user.is_authenticated  %} 
+                                        value="{{user.company}}"
+                                    {% endif %}
+                                    autofocus >
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <!-- Address -->
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                            <div class="form-group">
+                            <label for="address" class="control-label">Address*</label>
+                            <input  type="text" 
+                                    name="address" 
+                                    placeholder="Address" 
+                                    class="form-control" 
+                                    {% if user.is_authenticated  %} 
+                                        value="{{user.address}}"
+                                    {% endif %}
+                                    autofocus required/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <!-- Zipcode -->
+                        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="form-group">
+                                <label for="zipcode" class="control-label">Zipcode*</label>
+                                <input  type="text" 
+                                        id="zipcode" 
+                                        name="zipcode" 
+                                        placeholder="Zipcode" 
+                                        class="form-control" 
+                                        {% if user.is_authenticated  %} 
+                                        value="{{user.zipcode}}"
+                                        {% endif %}
+                                        autofocus required />
+                            </div>
+                        </div>
+                    
+
+                        <!-- city -->
+                        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="form-group">
+                                <label for="city" class=" control-label">City*</label>
+                                <input  type="text" 
+                                        id="city"   
+                                        placeholder="City" 
+                                        name="city" 
+                                        class="form-control" 
+                                        {% if user.is_authenticated  %} 
+                                            value="{{user.city}}"
+                                        {% endif %}
+                                        autofocus required   />
+                            </div>
+                        </div>
+                    
+                    <!-- country -->
+                        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="form-group">
+                            <label for="country" class="control-label">Country*</label>
+                            <select class="form-control dropdown-btn btn-light dropdown-toggle menu"
+                                    type="button"
+                                    name="country"
+                                    id="country"
+                                    aria-haspopup="true" 
+                                    aria-expanded="false"
+                                    autofocus required>  
+
+                                    {% for key, value in country_choices.items %}
+                                        {% if key == user.country %}
+                                            <option selected="true" value="{{ key }}">{{ value }}</option>
+                                            {% for key, value in country_choices.items %}
+                                                <option value="{{ key }}">{{ value }}</option>
+                                            {% endfor %}
+                                        
+                                        {% endif%}
+
+                                    {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <!-- website -->
+                        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                            <div class="form-group">
+                                <label for="website" class="control-label">Website</label>
+                                <input  type="text" 
+                                        id="website" 
+                                        placeholder="Your Webiste address" 
+                                        name="website" 
+                                        class="form-control" 
+                                        {% if user.is_authenticated  %} 
+                                            value="{{user.website}}"
+                                        {% endif %}
+                                        autofocus />
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                            <div class="form-group">
+                                <label for="email" class="control-label">Email*</label>
+                                <input  type="email" 
+                                        id="email" 
+                                        name="email" 
+                                        placeholder="Email" 
+                                        class="form-control" 
+                                        name= "email" 
+                                        {% if user.is_authenticated  %} 
+                                                value="{{user.email}}"
+                                        {% endif %}
+                                        required />
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div class="form-row">
+
+                        <!-- tel -->
+                        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="form-group">
+                                <label for="tel" class="control-label">Tel*</label>
+                                <input  type="tel"
+                                        name="tel" 
+                                        id="tel" 
+                                        placeholder="Tel" 
+                                        class="form-control" 
+                                        pattern="[0-9]{4}-[0-9]{2-3}-[0-9]{4}"
+                                        {% if user.is_authenticated  %} 
+                                                value="{{user.tel}}"
+                                        {% endif %}
+                                        required />
+                                        <!-- <small>Format: 1234-45[6]-[6]798 - Your phone number won't be disclosed anywhere</small> -->
+                            </div>
+                        </div>
+
+                        <!-- mobile number -->
+                        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="form-group">
+                                <label for="mobile" class="control-label">Mobile Number*</label>
+                                <input  type="tel"
+                                        name="mobile" 
+                                        id="mobile" 
+                                        placeholder="Mobile Number" 
+                                        class="form-control" 
+                                        pattern="[0-9]{4}-[0-9]{2-3}-[0-9]{4}"
+                                        {% if user.is_authenticated  %} 
+                                                value="{{user.mobile}}"
+                                        {% endif %}
+                                        required />
+                                        <!-- <small>Format: 1234-45[6]-[6]798 - Your phone number won't be disclosed anywhere</small> -->
+                            </div>
+                        </div>
+
+
+                    <!-- </div>
+
+                    <div class="form-row"> -->
+                        <!-- Fax -->
+                        <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                            <div class="form-group">
+                                <label for="fax" class=" control-label">Fax</label>
+                                <input  type="tel"
+                                        name="fax" 
+                                        id="fax" 
+                                        placeholder="Fax number" 
+                                        class="form-control" 
+                                        pattern="[+][0-9]{4}[-][0-9]{3-4}[-][0-9]{3}[-][0-9]{4}"
+                                        {% if user.is_authenticated  %} 
+                                                value="{{user.fax}}"
+                                        {% endif %}
+                                        required />
+                            </div>
+                        </div>
+                    
+                    </div>
+
+                    
+                    <div class="form-group">
+                        <div class="column-sm-9 column-sm-offset-3">
+                        <span class="help-block">*Required fields</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="form-row">
+                        <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto" >
+                            <div class="form-group">
+                                <button class="btn  text-capitalize font-weight-bold btn-gray text-light btn-block " 
+                                        type="submit"
+                                        value="Change" 
+                                        style="background-color: #4f4f4f;">
+                                        Change
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                </form>
+
+
+            </div>
+            <!-- Body -->
+
+        </div>
+  
+  
+    </div>
+</div>
+<!-- dashboard content -->
+</div>
+
+{% endblock %}

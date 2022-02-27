@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extrahead %}
+<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+{{ block.super }}
+{% endblock %}
+
+{% block title %} | Imprint {% endblock %}
+
+<style>
+    .border-top {
+      border-top-width: 2px !important;
+    }
+</style>
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div class="container pt-3">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="background-color: #FFF;">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}" class="text-dark">
+                    <i class="fas fa-home"></i> Home</a>
+                </li>
+
+                    <li class="breadcrumb-item active">
+                        Imprint
+                    </li>
+                </ol>
+                
+    </nav>
+</div>
+<!-- Breadcrumb -->
+
+<!-- body -->
+<div class="container mb-3 pt-3 pb-5 z-depth-1">
+
+    {% if imprints %}
+        {% for imprint in imprints %}
+
+        <!-- <div class="container">
+            {% if imprint.cover %}
+            
+            <div class="col-12 mb-4 mb-md-0 my-5 px-5">
+                
+                <div class=" overlay z-depth-1-half">
+                    <img src="{{ imprint.cover.url }}" class="img-fluid" alt="Imprint cover">
+                </div>
+            </div>
+            
+            {% endif %}
+
+            <h3 class="font-weight-bold text-center dark-grey-text  mt-3 ">{{ imprint.title }}</h3>
+            
+            {% if imprint.description %}
+                <p class="lead text-left text-muted pt-2 mb-5  mx-3">{{ imprint.description|safe }}</p>
+            {% endif %}
+            {% if imprint.detailed_description %}
+                <p class="lead text-left text-muted pt-2 mb-5  mx-3">{{ imprint.detailed_description|safe }}</p>
+            {% endif %}
+
+            {% if imprint.download_link %}
+            <div class="">
+                <a  type="button" 
+                    href="{{ imprint.download_link }}"
+                    class="btn btl-block text-light ml-0" 
+                    style="background: #4f4f4f; ">
+                    Download Attachment
+                </a>
+            </div>
+            {% endif %}
+
+
+            {% if imprint.video_link %}             
+                <div class="col-10 px-5">
+                    <div class="embed-responsive embed-responsive-21by9">
+                        <iframe width="560" height="315" src="{{imprint.video_link}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>   
+            {% endif %}
+        </div> -->
+
+        <div class="container">
+
+            <div class="row">
+                
+                <div class="col-12 my-0 py-0" >
+                    <h3 class="font-weight-bold text-left dark-grey-text  mt-3 ">{{ imprint.title }}</h3>
+                        <div style="width: 100%; ">
+
+                            {% if imprint.cover %}
+                            <div class="col-7 mb-5 ml-auto mt-0 pt-0">
+                                
+                                <div class=" overlay z-depth-1-half ml-2">
+                                    <img src="{{ imprint.cover.url }}" class="img-fluid img-responsive w-100 mr-0 pr-0  mb-2" alt="News cover" style="float:right; padding-left: 25px; padding-top: 0; margin-top: 0;">
+                                </div>
+                                
+                                <div class="" style="float:right; padding-left: 25px; padding-top: 0; margin-top: 0;">
+                                    
+                                </div>
+
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                        
+
+                        <div class="text-justify">
+                            {% if imprint.description %}
+                                <p class="lead text-left text-muted  mb-5  mx-3">{{ imprint.description|safe }}</p>
+                            {% endif %}
+                            {% if imprint.detailed_description %}
+                                <p class="lead text-left text-muted  mb-5  mx-3">{{ imprint.detailed_description|safe }}</p>
+                            {% endif %}
+                        </div>
+                        
+
+                    <!-- </div> -->
+                </div>
+
+                
+                {% if imprint.video_link %}             
+                    <div class="col-10 my-2 mx-auto">
+                        <div class="embed-responsive embed-responsive-21by9">
+                            <iframe src="{{imprint.video_link}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>   
+                {% endif %}
+
+                
+                
+                
+
+            </div>
+            
+        </div>
+
+        {% endfor %}
+    {% else %}
+        <p>there is no imprints</p>
+    {% endif %}
+            
+    
+</div>
+<!-- body -->
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extrahead %}
+<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+{{ block.super }}
+{% endblock %}
+
+{% block title %} | Legal Notice {% endblock %}
+
+<style>
+    .border-top {
+      border-top-width: 2px !important;
+    }
+</style>
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div class="container pt-3">
+    <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" style="background-color: #FFF;">
+
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}" class="text-dark">
+                    <i class="fas fa-home"></i> Home</a>
+                </li>
+
+                    <li class="breadcrumb-item active">
+                        Legal Notice
+                    </li>
+                </ol>
+                
+    </nav>
+</div>
+<!-- Breadcrumb -->
+
+<!-- body -->
+<div class="container mb-3 py-5 z-depth-1">
+
+    {% if terms %}
+        {% for term in terms %}
+
+        <div class="container">
+            {% if term.cover %}
+            <!--Grid Intro Image-->
+            <div class="col-12 mb-4 mb-md-0 my-5 px-5">
+                <!--Image-->
+                <div class=" overlay z-depth-1-half">
+                    <img src="{{ term.cover.url }}" class="img-fluid" alt="Terms and Conditions cover">
+                </div>
+            </div>
+            <!--Grid Intro Image-->
+            {% endif %}
+
+            <h3 class="font-weight-bold text-center dark-grey-text  mt-3 ">{{ term.title }}</h3>
+            <!-- <hr class="font-weight-bold text-center dark-grey-text text-center my-4 mx-auto w-50"> -->
+            {% if term.description %}
+                <p class="lead text-center text-muted pt-2 mb-5">{{ term.description|safe }}</p>
+            {% endif %}
+            {% if term.detailed_description %}
+                <p class="lead text-center text-muted pt-2 mb-5">{{ term.detailed_description|safe }}</p>
+            {% endif %}
+
+            {% if term.download_link %}
+            <div class="">
+                <a  type="button" 
+                    href="{{ term.download_link }}"
+                    class="btn btl-block text-light ml-0" 
+                    style="background: #4f4f4f; ">
+                    Download Attachment
+                </a>
+            </div>
+            {% endif %}
+
+
+            {% if term.video_link %}             
+                <div class="col-10 px-5">
+                    <div class="embed-responsive embed-responsive-21by9">
+                        <iframe width="560" height="315" src="{{term.video_link}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>   
+            {% endif %}
+        </div>
+
+
+        {% endfor %}
+    {% endif %}
+            
+    
+</div>
+<!-- body -->
+{% endblock %}

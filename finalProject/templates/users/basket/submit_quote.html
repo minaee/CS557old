@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block title %} | New Quote {% endblock %}
+
+{% block content %}
+
+
+<div class="container mb-3">
+  <!-- Breadcrumb -->
+<div class="container pt-3">
+  <nav aria-label="breadcrumb">
+              <ol class="breadcrumb" style="background-color: #FFF;">
+
+              <li class="breadcrumb-item">
+                  <a href="{% url 'index' %}" class="text-dark">
+                  <i class="fas fa-home"></i> Home</a>
+              </li>
+              
+              <li class="breadcrumb-item">
+                  <a href="{% url 'dashboard' %}" class="text-dark">
+                  <i class="fas fa-home"></i> Dashboard</a>
+              </li>
+
+              <li class="breadcrumb-item active">
+                New Quote
+              </li>
+
+
+              </ol>
+              
+  </nav>
+</div>
+<!-- Breadcrumb -->
+
+
+<!-- dashboard content -->
+<div class="container z-depth-1 pb-3">
+  <div class="row">
+
+      <!-- sidebar -->
+      <div class="col-md-3 offset-xl-0 mt-3 ">
+        
+        {% include 'partials/_dashboard_base.html' %}
+          
+      </div>
+
+      <!-- content -->
+      <div class="col-md-9 ml-0 pl-0" >
+
+            <div class="row">
+                <!-- Alerts -->
+                {% include 'partials/_alerts.html' %}
+                <!-- Aletrs -->
+            </div>
+
+            <h3 class="mt-3"> New Quote </h3>
+            <hr>
+
+            <form name="submit_quote" id="submit_quote" action="{% url 'submit_quote' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                
+
+                <div class="form-row" >
+                    <!-- last name -->
+
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <div class="form-group">
+
+                            <div class="row">
+
+                                <div class="col-2 mr-auto " >
+                                    <label for="subject" class="col-form-label">Subject:</label>
+                                </div>
+
+                                <div class="col-4 mr-auto" >
+                                    <select class="form-control dropdown-btn btn-light dropdown-toggle menu"
+                                            type="button"
+                                            name="subject"
+                                            id="subject"
+                                            aria-haspopup="true" 
+                                            aria-expanded="false"
+                                            autofocus required>   
+
+                                            <!-- <option class="subject-item" selected value="QuoteList" disabled="disabled">Quote List</option> -->
+                                            <!-- <option disabled="disabled"> General</option> -->
+                                            {% if general %}
+                                                {% for key, value in general.items %}
+                                                    {% if key == 'Quote' %}
+                                                    <option class="subject-item" selected value="{{ key }}">{{ value }}</option>
+                                                    {% else %}
+                                                    <option class="subject-item" value="{{ key }}">{{ value }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                            <option disabled="disabled"> Services</option>
+                                            {% if services_choices %}
+                                                {% for key, value in services_choices.items %}
+                                                    <option class="subject-item" value="{{ key }}">{{ value }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                            <option disabled="disabled"> Products</option>
+                                            {% if products_choices %}
+                                                {% for key, value in products_choices.items %}
+                                                    <option class="subject-item" value="{{ key }}">{{ value }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                            
+                                            <option disabled="disabled"> Support</option>
+                                            {% if support_choices %}
+                                                {% for key, value in support_choices.items %}
+                                                    <option class="subject-item" value="{{ key }}"> {{ value }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                            <!-- <option disabled="disabled"> Company</option>
+                                            {% if company_choices %}
+                                                {% for key, value in company_choices.items %}
+                                                    <option value="{{ key }}"> {{ value }}</option>
+                                                {% endfor %}
+                                            {% endif %} -->
+
+                                    </select>
+                                </div>
+                                <div class="col-6"></div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div> 
+
+                <div class="form-row" >
+
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <div class="form-group">
+
+                            <div class="row">
+
+                                <div class="col-2 mr-auto" >
+                                    <!-- <h5 >Your Quote:</h5> -->
+                                </div>
+
+                                <div class="col-10 ml-auto" >
+                                    {% if wishlistitem %}
+                                    <div class="col-12">  <!--  style="background: linear-gradient(45deg, #3f78f3, #55f041a6);" -->
+                                    <!-- <form method="post" id="delete_from_wishlist" data-url="{% url 'my_products' %}"> -->
+                                        <!-- {% csrf_token %} -->
+                                        <div class="row mb-3">
+
+                                        <div class="col-12">
+
+                                            <div class="table-responsive-xl">
+                                            <table class="table table-sm table-hover">
+                                                
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center" scope="col"></th>
+                                                    <th class="text-left" scope="col">Item</th>
+                                                    <th class="text-left" scope="col">Category</th>
+                                                    <th class="text-center" scope="col">Qty</th>
+                                                    <!-- <th class="text-center" scope="col">Price</th> -->
+                                                    <th class="text-center" scope="col">When is Required?</th>
+                                                    <!-- <th class="text-center" scope="col">Add/Remove</th> -->
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                {% for item in wishlistitem %}
+                                                <tr>
+                                                    <th class="text-center" scope="row">{{ forloop.counter }}</th>
+                                                    <td class="text-left" >{{ item.title }}</td>
+                                                    <td class="text-left" >{{ item.category_name }} | {{ item.class_name }}</td>
+                                                    <td class="text-center">
+                                                        <p>
+                                                            {{ item.count }}
+                                                        </p>
+                                                    </td>
+                                                    <!-- <td class="text-center" id="price_{{ item.title }}{{ item.type }}">
+                                                    
+                                                        {% if item.category_name == 'Support' %}
+                                                        {% if item.price is 0 %}
+                                                            Free
+                                                        {% elif not item.price %}
+                                                            Free
+                                                        {% else %}
+                                                            &euro;{{ item.price }}
+                                                        {% endif %}
+                                                        {% else %}
+                                                            Send the Quote 
+                                                        {% endif %}
+                                                    
+                                                    </td> -->
+                                                    <td class="text-center" >
+                                                    
+                                                    <input type="hidden" name="unique_id" value="{{ item.tag }}{{ item.id }}">
+                                                    <input type="hidden" name="item_id_{{ item.tag }}{{ item.id }}" value="{{ item.id }}">
+                                                    <input type="hidden" name="item_title_{{ item.tag }}{{ item.id }}" value="{{ item.title }}">
+                                                    <input type="hidden" name="item_tag_{{ item.tag }}{{ item.id }}" value="{{ item.tag }}">
+
+                                                    <abbr title = "Enter date in yyyy-mm-dd format">
+                                                    <input  type = 'date'
+                                                            class="input_date"
+                                                            placeholder="yyyy-mm-dd"
+                                                            
+                                                            name='when_is_required_date_{{ item.tag }}{{ item.id }}' 
+                                                            id='when_is_required_date_{{ item.tag }}{{ item.id }}' 
+                                                            required 
+                                                            min="{{today|date:'Y-m-d'}}"
+                                                            pattern="\d{4}-\d{2}-\d{2}">
+
+                                                    </abbr>
+                                                    </td>
+                                                    <!-- <td class="text-center"> 
+                                                        <button type="submit" class="btn btn-light" aria-label="sync" name="delete_from_wishlist_button" id="delete_from_wishlist_button">
+                                                            <span class="fas fa-sync-alt fa-md" aria-hidden="true"></span>
+                                                        </button>
+                                                    </td> -->
+
+                                                </tr>
+                                                {% endfor %}
+                                                </tbody>
+
+                                            </table>
+                                            </div>
+                                            
+
+                                        </div>
+                                        
+                                        </div>
+                                    <!-- </form> -->
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <div class="form-group">
+
+                            <div class="row">
+
+                                <div class="col-1 mr-auto">
+                                    <label for="message" class="col-form-label">Message:</label>
+                                </div>
+
+                                <div class="col-10 ml-auto">
+                                    <textarea   name="message" 
+                                                id="message" 
+                                                class="form-control" 
+                                                maxlength="4096" 
+                                                onkeyup="textCounter(this,'counter',4096);" 
+                                                autofocus required 
+                                                style="height: 150px !important; " ></textarea>
+
+                                    <input  
+                                            disabled  
+                                            maxlength="4" 
+                                            size="4" 
+                                            value="4096" 
+                                            id="counter" 
+                                            style="background-color: rgb(255, 255, 255); border: none; right: 0px;" ></input>
+                                </div>
+                                
+
+                            </div>
+                            
+                            
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="form-row" >
+
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <div class="form-group">
+
+                            <div class="row">
+
+                                <div class="col-2 mr-auto" >
+                                    <label for="attached_file" class="col-form-label">Attach a file:</label>
+                                </div>
+
+                                <div class="col-10  ml-auto " >
+                                    <input type="file" id="attached_file" name="attached_file">
+                                </div>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                
+
+                <!-- Submit button -->
+                <div class="form-row">
+                    <div class="col-12 col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
+                        <div class="form-group">
+                        <button class=" btn btn-gray  text-light" 
+                                style="background-color: #6c757d;"
+                                type="submit"
+                                value="Send" 
+                                onClick="return empty()"
+                                >
+                                Send
+                        </button>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </form>
+
+      </div>
+
+
+  </div>
+</div>
+<!-- dashboard content -->
+
+</div>
+
+
+<script>
+    function textCounter(field,field2,maxlimit)
+    {
+     var countfield = document.getElementById(field2);
+     if ( field.value.length > maxlimit ) {
+      field.value = field.value.substring( 0, maxlimit );
+      return false;
+     } else {
+      countfield.value = maxlimit - field.value.length;
+     }
+    }
+</script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script src="//cdn.ckeditor.com/4.15.0/full/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace( 'message' );
+    CKEDITOR.config.allowedContent = true;
+    CKEDITOR.config.removeFormatAttributes = '';
+    CKEDITOR.config.ignoreEmptyParagraph = false;
+    CKEDITOR.config.toolbarGroups = [
+		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+		{ name: 'forms', groups: [ 'forms' ] },
+		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+		{ name: 'links', groups: [ 'links' ] },
+		{ name: 'insert', groups: [ 'insert' ] },
+		{ name: 'styles', groups: [ 'styles' ] },
+		{ name: 'colors', groups: [ 'colors' ] },
+		{ name: 'tools', groups: [ 'tools' ] },
+		{ name: 'others', groups: [ 'others' ] },
+		{ name: 'about', groups: [ 'about' ] }
+	];
+    CKEDITOR.config.removeButtons = 'Source,Save,NewPage,ExportPdf,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,CopyFormatting,RemoveFormat,Italic,Underline,Strike,Subscript,Superscript,Textarea,Select,Button,ImageButton,HiddenField,Blockquote,CreateDiv,Outdent,Indent,JustifyLeft,JustifyCenter,JustifyRight,JustifyBlock,Language,Link,Image,Flash,Unlink,Anchor,Table,HorizontalRule,Smiley,SpecialChar,PageBreak,Iframe,FontSize,Font,Format,Styles,TextColor,ShowBlocks,Maximize,About,BGColor';
+</script>
+<script type="text/javascript">
+
+    
+    // var today = new Date();
+    // var dd = String(today.getDate()).padStart(2, '0');
+    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    // var yyyy = today.getFullYear();
+    // $(document).ready(function(){
+    //     $("#JQTarget").load("Forms.php #Renew").ready( function(){
+    //         $("#JQTarget").find("#startDate").attr({"min" : '2013-12-09'});
+    //     });
+    // });
+    // today = yyyy + '-' + mm + '-' + dd;
+    // console.log('today: ', today);
+    // document.getElementsByClassName(".input_date").ready = function () {
+    //     this.attr({"min" : today});
+        
+    // }
+    
+    
+    $('#submit_quote').submit(function() 
+    {
+        
+        if (jQuery("#cke_1_contents iframe").contents().find("body").text() === "")   {
+            alert('Please enter your message or a correct date.');
+            return false;
+        }       
+    });
+    
+</script>
+{% endblock %}
+

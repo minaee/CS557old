@@ -1,0 +1,200 @@
+{% load static %}
+
+
+<div id="sidebar-main" class="sidebar sidebar-default sidebar-separate my-1">
+  <div class="sidebar-category sidebar-default">
+      
+    <div class="category-title" >
+      <span>Dashboard</span>
+    </div>
+    <div class="category-content">
+
+        <ul id="fruits-nav" class="nav flex-column">
+            
+            {% if not user.is_superuser %}
+            <li class="nav-item">
+                
+                <div class="d-flex">
+                    
+                    <div class="d-flex justify-content-start">
+                        <a  href="{% url 'my_products' %}" 
+                            {% if 'my_products' in request.path %}
+                                class="nav-link text-dark font-weight-bold"
+                            {% else %}
+                                class="nav-link text-dark"
+                            {% endif %}>
+                            My Quotes
+                        </a>  
+                    </div>
+
+                    {% if there_is_unread_quote_user %}
+                    <div class="d-flex justify-content-end align-items-center ml-auto pr-3">
+                        
+                        <i class="fas fa-bell fa-1x" style="color: orangered;"></i>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </li>
+            {% endif %}
+
+
+            {% if user.is_superuser %} 
+            <li class="nav-item">
+
+                <div class="d-flex">
+                    
+                    <div class="d-flex justify-content-start">
+                        <a    href="{% url 'received_quotes' %}" 
+                            {% if 'received_quotes' in request.path %}
+                                class="nav-link text-dark font-weight-bold"
+                            {% else %}
+                                class="nav-link text-dark"
+                            {% endif %}
+                            >
+                                    Received Quotes {% if count_unread_quotes_admin %}({{ count_unread_quotes_admin }}){% endif %}
+                        </a>    
+                    </div>
+
+                    {% if there_is_unread_quote_admin %}
+                    <div class="d-flex justify-content-end align-items-center ml-auto pr-3">
+                        
+                        <i class="fas fa-bell fa-1x" style="color: orangered;"></i>
+                    </div>
+                    {% endif %}
+
+                </div>
+                
+                <!--<a    href="{% url 'received_quotes' %}" 
+                    {% if 'received_quotes' in request.path %}
+                        class="nav-link text-dark font-weight-bold bg-light"
+                    {% else %}
+                        class="nav-link text-dark bg-light"
+                    {% endif %}
+                    >
+                            Received Quotes
+                </a>
+                
+                 <i class="fas fa-bell mr-0"></i> -->
+                
+
+            </li> 
+            <li class="nav-item">
+                <div class="d-flex">
+                    <div class="d-flex justify-content-start">
+                        <a    href="{% url 'admin_inbox' %}" 
+                            {% if 'admin_inbox' in request.path or 'reply' in request.path %}
+                                class="nav-link text-dark font-weight-bold"
+                            {% else %}
+                                class="nav-link text-dark"
+                            {% endif %}
+                            >
+                            General Messages  {% if there_is_unread_message_admin %}({{ count_unread_messages_admin }}){% endif %}
+                        </a>
+                    </div>
+    
+                    {% if there_is_unread_message_admin %}
+                    <div class="d-flex justify-content-end align-items-center ml-auto pr-3">
+                        
+                        <i class="fas fa-bell fa-1x" style="color: orangered;"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </li> 
+            {% else %}
+            <li class="nav-item">
+                <a    href="{% url 'contact' %}" 
+                    {% if 'contacts' in request.path %}
+                        class="nav-link text-dark font-weight-bold"
+                    {% else %}
+                        class="nav-link text-dark"
+                    {% endif %}
+                    >
+                    New Inquiry
+                </a>
+            </li>  
+            
+            <li class="nav-item">
+                
+                <div class="d-flex">
+                    <div class="d-flex justify-content-start">
+                        <a    href="{% url 'user_inbox' %}" 
+                            {% if 'user_inbox' in request.path %}
+                                class="nav-link text-dark font-weight-bold"
+                            {% elif 'admin_inbox' in request.path %}
+                                class="nav-link text-dark font-weight-bold"
+                            {% else %}
+                                class="nav-link text-dark"
+                            {% endif %}
+                            >
+                            General Messages {% if there_is_unread_message_user %}({{ count_unread_messages_user }}){% endif %}
+                        </a>
+                    </div>
+    
+                    {% if there_is_unread_message_user %}
+                    <div class="d-flex justify-content-end align-items-center ml-auto pr-3">
+                        
+                        <i class="fas fa-bell fa-1x" style="color: orangered;"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </li> 
+
+            {% endif %}
+
+            <li class="nav-item">
+            <a  href="{% url 'edit_profile' %}" 
+                {% if 'edit_profile' in request.path %}
+                    class="nav-link text-dark font-weight-bold"
+                {% else %}
+                    class="nav-link text-dark"
+                {% endif %}>
+                Edit Profile
+            </a>
+        </li> 
+        
+        <li class="nav-item">
+            <a  href="{% url 'password_reset' %}" 
+                {% if 'password_reset' in request.path %}
+                    class="nav-link text-dark font-weight-bold"
+                {% else %}
+                    class="nav-link text-dark"
+                {% endif %}>
+                Change Password
+            </a>
+        </li>
+            
+        
+        
+
+        </ul>
+    </div>
+
+    {% if user.is_promoted %}
+    <div class="category-title" >
+        <span>Demo</span>
+    </div>
+    <div class="category-content">
+        <ul id="fruits-nav" class="nav flex-column">
+            
+            <li class="nav-item">
+                <a  href="{% url 'smartflow_app' %}" 
+                    {% if 'smartflow' in request.path %}
+                        class="nav-link text-dark font-weight-bold"
+                    {% else %}
+                        class="nav-link text-dark"
+                    {% endif %}>
+                    SmartFlow 
+                </a>
+            </li>
+
+
+        </ul>
+    </div>
+    {% endif %}
+    
+
+  </div>
+</div>
+
+<!-- style="background-color: #9c9c9c;" -->

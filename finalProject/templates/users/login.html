@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %} | Account Login {% endblock %}
+
+{% block content %}
+
+
+<section id="register" >
+  <div class="container">
+    <div class="row py-3 ">
+
+      <!-- Login Sction -->
+      <div class="col-md-6 mx-auto" >
+        <div class="card " >
+
+          <!-- Login -->
+          <div class="card-header text-light" style="background: #4f4f4f;">
+            <h4>
+              <i class="fas fa-user-plus"></i> Login</h4>
+          </div>
+          <!-- Login -->
+
+          <!-- body -->
+          <div class="card-body pb-0">
+
+              <!-- Alerts -->
+              <!-- {% include 'partials/_alerts.html' %} -->
+              <!-- Aletrs -->
+              
+              <form action="{% url 'log_in' %}" method="POST" id="login-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                  <label for="username" class="column-sm-3 control-label">Username </label>
+                  <div class="column-sm-9">
+                    <input type="email" name="username" placeholder="Username" class="form-control" autofocus required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="password" class="column-sm-3 control-label">Password </label>
+                  <div class="column-sm-9">
+                    <input type="password" name="password" placeholder="Password" class="form-control" required>
+                  </div>
+                </div>
+
+
+                <!-- <div class="form-group">
+                  <input type="submit" />
+                  <button class='js-captcha-refresh'></button>
+                </div> -->
+                
+                <div class="form-group">
+                  <div class="pt-3">
+                    <div class="g-recaptcha mx-0" data-sitekey="6Lfsn-EZAAAAADEKslTTjXMJYNNVO8fPS-1_S6uj"></div>
+                    <button type="submit" 
+                            class="g-recaptcha btn btl-block text-light w-100 mx-0" 
+                            style="background: #4f4f4f; ">
+                            Login
+                          </button>
+                    
+                    <!-- <input type="checkbox" id="remember_me" name="remember_me" >
+                    <label for="remember_me"> Remember me</label> -->
+                  </div>
+                </div>
+
+              </form>
+
+
+          </div>
+          <!-- body -->
+          
+          <!-- footer -->
+          <div class="card-footer">
+            <a  href="{% url 'password_reset' %}">
+              Forget your password?
+            </a>
+          </div>
+          <!-- footer -->
+
+
+        </div>
+      </div>
+      <!-- Login Sction -->
+
+      <!-- Registration link -->
+      <div class="col-md-6 mx-auto" >
+        <div class="card" style="min-height: 400px;">
+        
+          <!-- New Customer -->
+          <div class="card-header text-light" style="background: #4f4f4f;">
+            <h4>
+              <i class="fas fa-user-plus"></i> New Customer</h4>
+          </div>
+          <!-- New Customer -->
+
+          <!-- body -->
+          <div class="card-body pb-5" style="position: relative;">
+            <p>
+              Creating an Alternativ account delivers personalized access to:
+            </p>
+
+            <ul>
+              <li>
+                Product-Specific Guidances
+              </li>
+
+              <li>
+                Collaborative workspaces
+              </li>
+
+              <li>
+                Order status and history
+              </li>
+
+            </ul>
+
+            <p>
+              In order to access full Alternativ functionality, you must create an account.
+            </p>
+
+            
+            <div class="text-center pt-3 ">
+              <a  class="btn btl-block text-light w-100" 
+                  href="{% url 'register' %}" 
+                  style="background: #4f4f4f; ">
+                Register
+              </a>  
+            </div>
+
+          </div>
+          <!-- body -->
+
+          
+        
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+    
+<script>
+  function onSubmit(token) {
+    document.getElementById("login-form").submit();
+  }
+</script>
+
+{% endblock %} 
+
+
