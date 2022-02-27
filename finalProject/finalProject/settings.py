@@ -20,7 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ji&jpf)dffd=!srngbfkc%gggz2)f9qpn(faq1grj@7&2*0=rq'
+with open('finalProject/django_service') as f:
+    SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -74,9 +75,21 @@ WSGI_APPLICATION = 'finalProject.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'cs557',
+        'USER': 'postgres',
+        'PASSWORD': '3593',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        # 'OPTIONS': {
+        #     'service': 'postgresql',
+        #     'passfile': '.my_pgpass',
+        # },
     }
 }
 
