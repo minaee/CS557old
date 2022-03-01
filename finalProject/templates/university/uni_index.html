@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extrahead %}
+<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Cover -->
+<style>
+
+  .video{
+    width: 100%;
+    overflow:hidden;
+    display:block;
+    height: 360px;
+    margin: 0;
+  }
+
+  #video{
+  object-fit: initial;
+  width: 100%;
+  margin: 0;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+  a:active {
+    text-decoration: none;
+  }
+
+  .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+  }
+
+  @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+  }
+
+  .myCarousel-indicators > li {
+    border-radius: 50%;
+  }
+  .carousel-indicators li{
+    background-color:rgb(226, 226, 226);
+
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  carousel-indicators li:active{
+    background-color: rgb(97, 97, 97);
+  }
+  .hovering:hover{
+    background-color: rgba(226, 226, 226, 0.507);
+  }
+
+  .jumbotron-image {
+      background-image: url('{% static "img/career.jpeg" %}');
+      
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+  }
+
+</style>
+
+
+  
+
+  <div class="container marketing mb-3 ">
+    Hi.<br>
+    this is univeristy index
+
+
+  </div>
+  
+
+  
+{% endblock %}
