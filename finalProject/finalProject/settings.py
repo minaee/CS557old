@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     
     
     'iso3166',
+    'django_extensions',
+
     
 ]
 
