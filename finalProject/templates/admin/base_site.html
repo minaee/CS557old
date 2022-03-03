@@ -2,23 +2,20 @@
 
 {% load static %}
 
-{% block extrahead %}
-<script>window.CKEDITOR_BASEPATH = '/static/ckeditor/ckeditor/';</script>
-{{ block.super }}
-{% endblock %}
-
 
 {% block branding %}
-    <h1 id="head">
-            <img src="{% static 'img/black_logo.png' %}"
-            alt="Alternativ"
-            style="width:60px; height:60px; color: #fff !important;"
-            class="brand_img"
-            >  Admin Area
+    
+    <h1 id="head" class="text-dark">
+        <img src="{% static 'img/purple_logo.png' %}"
+        alt="CS557 Final Project"
+        style="width:auto; height:60px; color: #fff !important;"
+        class="brand_img"
+        >  User Area
     </h1>
+
 {% endblock %}
 
 {% block extrastyle %}
-    <link rel="stylesheet" 
+    <link rel="stylesheet" type="text/css" media="screen,projection" 
           href="{% static 'css/admin.css' %}">
 {% endblock %}

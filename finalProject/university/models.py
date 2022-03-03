@@ -107,8 +107,9 @@ class Section(models.Model):
     # UniqueConstraint(fields=['course_id', 'sec_id', 'semester', 'year'], name="unique_section")
 
 
+
 class Teaches(models.Model):
-    id = models.ForeignKey(Instructor,
+    id = models.OneToOneField(Instructor,
                            on_delete=models.CASCADE,
                            primary_key=True,
                            related_name="TeachesId",
@@ -130,7 +131,7 @@ class Teaches(models.Model):
 
 
 class Takes(models.Model):
-    id = models.ForeignKey(Student,
+    id = models.OneToOneField(Student,
                            on_delete=models.CASCADE,
                            primary_key=True,
                            unique=True)
