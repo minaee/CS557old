@@ -6,6 +6,8 @@ from django.db.models import UniqueConstraint
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
 
 from datetime import datetime
+from users.models import User
+
 
 class Classroom(models.Model):
     building = models.CharField(max_length=15)
@@ -48,19 +50,24 @@ class Course(models.Model):
                                                MaxLengthValidator(0, message="Credits should be only 2 digits.")])
   
   
-class Person(models.Model):
-    first_name = models.CharField(max_length = 25)
-    last_name = models.CharField(max_length = 25)
-    # dept_name = models.CharField(max_length = 25)
+# class Person(models.Model):
+#     # first_name = models.CharField(max_length = 25)
+#     # last_name = models.CharField(max_length = 25)
+#     # dept_name = models.CharField(max_length = 25)
     
-    class Meta:
-        abstract = True
     
-    def __str__(self) -> str:
-        return str(self.first_name) + " " + str(self.last_name)
+#     class Meta:
+#         abstract = True
+    
+#     def __str__(self) -> str:
+#         return str(self.first_name) + " " + str(self.last_name)
 
 
-class Student(Person): 
+class Student(models.Model): 
+    user = models.OneToOneField(User,
+                                on_delete=models.CASCADE,
+                                primary_key=True)
+    
     tot_cred = models.IntegerField(null=False, 
                                    blank=False, 
                                    validators=[MinValueValidator(0, message="Credits should be positive values.")])
@@ -69,17 +76,29 @@ class Student(Person):
         Department,
         on_delete=models.CASCADE
     )
+    class Meta:
+        managed = False
+        db_table = 'student'
 
 
-class Instructor(Person): 
+class Instructor(models.Model): 
+    user = models.OneToOneField(User,
+                                on_delete=models.CASCADE,
+                                primary_key=True)
+    
     salary = models.FloatField(null=False,
                                blank=False, 
                                validators=[MaxLengthValidator(8, message="No more than 8 digits!"), 
                                            MinValueValidator(29000.0, "Salary should be more than $29000!")])
+    
     dept_name = models.ForeignKey(
         Department,
         on_delete=models.CASCADE
     )
+    
+    class Meta:
+        managed = False
+        db_table = 'instructor'
 
 
 class Section(models.Model):
