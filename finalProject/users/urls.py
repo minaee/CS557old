@@ -13,6 +13,12 @@ from . import views
 # handler400 = 'cms.views.my_custom_bad_request_view'
 
 urlpatterns = [
+    path('signup/', views.signUpView, name='signup'),
+    path('signup/student/', views.studentSignUpView, name='student_signup'),
+    path('signup/instructor/', views.instructorSignUpView, name='instructor_signup'),
+
+
+
     path('login', views.mylogin, name='log_in'),
     path('register', views.register, name='register'),
     path('log_out', views.mylogout, name='log_out'),

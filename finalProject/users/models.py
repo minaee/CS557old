@@ -5,15 +5,12 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import RegexValidator
+from django.core.validators import MinValueValidator, MaxLengthValidator
 
 from .managers import UserManager
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     
-    
-
     first_name = models.CharField(_('first name'), max_length=30, null=True, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, null=True, blank=True)
     
@@ -22,6 +19,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(_('staff'), default=False)
     is_promoted = models.BooleanField(_('Is Promoted'), default=False, help_text="To promote the user for special features, e.g. univeristy staff & ...")
 
+    is_student = models.BooleanField(default=False)
+    is_instructor = models.BooleanField(default=False)
     
     email = models.EmailField(_('email address'), unique=True)
 
@@ -47,20 +46,32 @@ class User(AbstractBaseUser, PermissionsMixin):
         lastname = lastname.rstrip()
         full_name = str(firstname) + ' ' + str(lastname)
         return full_name
-
-    def get_short_name(self):
-        '''
-        Returns the short name for the user.
-        '''
-        return self.first_name
-
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        '''
-        Sends an email to this User.
-        '''
-        send_mail(subject, message, from_email, [self.email], **kwargs)
         
     def get_info(self):
         info = ('Name: ' + str(self.get_full_name()) + ',\n'
                 'Email: ' + str(self.email) )
         return info
+    
+class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    tot_cred = models.IntegerField(null=False, 
+                                   blank=False, 
+                                   validators=[MinValueValidator(0, message="Credits should be positive values.")])
+    
+    dept_name = models.ForeignKey(
+        'university.Department',
+        on_delete=models.CASCADE
+    )
+
+
+class Instructor(models.Model): 
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    salary = models.FloatField(null=False,
+                               blank=False, 
+                               validators=[MaxLengthValidator(8, message="No more than 8 digits!"), 
+                                           MinValueValidator(29000.0, "Salary should be more than $29000!")])
+    
+    dept_name = models.ForeignKey(
+        'university.Department',
+        on_delete=models.CASCADE
+    )

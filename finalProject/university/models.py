@@ -1,13 +1,10 @@
-from pyexpat import model
-from statistics import mode
-from time import time
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
+import uuid
 
 from datetime import datetime
-from users.models import User
-
+from users.models import Student, Instructor
 
 class Classroom(models.Model):
     building = models.CharField(max_length=15)
@@ -63,42 +60,49 @@ class Course(models.Model):
 #         return str(self.first_name) + " " + str(self.last_name)
 
 
-class Student(models.Model): 
-    user = models.OneToOneField(User,
-                                on_delete=models.CASCADE,
-                                primary_key=True)
+# class Student(models.Model): 
+#     # user = models.ForeignKey(User,
+#     #                             on_delete=models.CASCADE,
+#     #                             )
+#     student_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4,  db_index=True)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     tot_cred = models.IntegerField(null=False, 
+#                                    blank=False, 
+#                                    validators=[MinValueValidator(0, message="Credits should be positive values.")])
     
-    tot_cred = models.IntegerField(null=False, 
-                                   blank=False, 
-                                   validators=[MinValueValidator(0, message="Credits should be positive values.")])
-    
-    dept_name = models.ForeignKey(
-        Department,
-        on_delete=models.CASCADE
-    )
-    class Meta:
-        managed = False
-        db_table = 'student'
+#     dept_name = models.ForeignKey(
+#         Department,
+#         on_delete=models.CASCADE
+#     )
+#     class Meta:
+#         db_table = 'student'
+#     # class Meta:
+#     #     # managed = False
+#     #     # db_table = 'student'
+#     #     proxy = True
 
 
-class Instructor(models.Model): 
-    user = models.OneToOneField(User,
-                                on_delete=models.CASCADE,
-                                primary_key=True)
+# class Instructor(models.Model): 
+#     # user = models.ForeignKey(User,
+#     #                             on_delete=models.CASCADE,
+#     #                             )
+#     instructor_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4,  db_index=True)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     salary = models.FloatField(null=False,
+#                                blank=False, 
+#                                validators=[MaxLengthValidator(8, message="No more than 8 digits!"), 
+#                                            MinValueValidator(29000.0, "Salary should be more than $29000!")])
     
-    salary = models.FloatField(null=False,
-                               blank=False, 
-                               validators=[MaxLengthValidator(8, message="No more than 8 digits!"), 
-                                           MinValueValidator(29000.0, "Salary should be more than $29000!")])
-    
-    dept_name = models.ForeignKey(
-        Department,
-        on_delete=models.CASCADE
-    )
-    
-    class Meta:
-        managed = False
-        db_table = 'instructor'
+#     dept_name = models.ForeignKey(
+#         Department,
+#         on_delete=models.CASCADE
+#     )
+#     class Meta:
+#         db_table = 'instructor'
+#     # class Meta:
+#     #     # managed = False
+#     #     # db_table = 'instructor'
+    #     proxy = True
 
 
 class Section(models.Model):
